@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu  xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+
+    <item android:id="@+id/searchByTitleId" android:title="Search By Title" ></item>
+
+    <item android:id="@+id/searchByTimeId" android:title="Search By Time"></item>
+
+    <item android:id="@+id/searchByLocationId" android:title="Search By Location"></item>
+</menu>
