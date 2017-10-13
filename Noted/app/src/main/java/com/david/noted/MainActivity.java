@@ -29,7 +29,8 @@ public class MainActivity extends AppCompatActivity {
                 Log.i("Add Button", "buttoon click");
                 Intent intent = new Intent(getApplicationContext(),NoteEditorActivity.class);
 
-                intent.putExtra("noteId", );
+               // intent.putExtra("noteId", );
+                startActivity(intent);
                 return true;
 
             }else{
