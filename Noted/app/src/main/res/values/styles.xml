@@ -6,7 +6,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">#d1000000</item>
-        
+
        <!-- <item name="android:icon">@drawable/ic_search_black_24dp</item> -->
     </style>
 
