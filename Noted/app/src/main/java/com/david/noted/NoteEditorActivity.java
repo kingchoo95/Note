@@ -1,68 +1,46 @@
 package com.david.noted;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
-import android.support.v7.app.AlertDialog;
+
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.Window;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 public class NoteEditorActivity extends AppCompatActivity {
 
-    //define spinner
-    Spinner sp;
-
     //make string array for spinner
-    String names[]={"red","blue","purple"};
+    String dates[]={"Today","Tomorrow","Pick a date"};
+    String times[]={"Select a Time"};
+    String repeats[]={"Does not repeat","Daily","Weekly","Monthly","Yearly"};
 
     //defines array adapter of string type
-    ArrayAdapter adapter;
+    ArrayAdapter dateAdapter,timeAdapter,repeatAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_editor);
 
-
-        //set adapter to spinner
-         sp = (Spinner)findViewById(R.id.spinnerRepeatId);
-         adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, names);
-
-        sp.setAdapter(adapter);
-        sp.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                switch(position){
-                    case 0:{
-                        Log.i("color","red");
-                    }
-                    case 1:{
-                        Log.i("color","blue");
-                    }
-                    default:{
-                        Log.i("color","purple");
-                    }
-
-                }
-            }
-        });
+        dateAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, dates);
+        timeAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, times);
+        repeatAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, repeats);
 
     }
     // menu bar for add reminder start
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-       MenuInflater menuInflater = getMenuInflater();
+
+        MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.addreminder_menu,menu);
         return super.onCreateOptionsMenu(menu);
+
     }
 
     @Override
@@ -75,10 +53,24 @@ public class NoteEditorActivity extends AppCompatActivity {
             final Dialog dialog = new Dialog(this);
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
             dialog.setContentView(R.layout.add_reminder_dialog);
+
+            //define spinner
+            final Spinner repeatSp = (Spinner)dialog.findViewById(R.id.spinnerRepeatId);
+            final Spinner dateSp = (Spinner)dialog.findViewById(R.id.spinnerDateId);
+            final Spinner timeSp = (Spinner)dialog.findViewById(R.id.spinnerTimeId);
+
+            //set adapter to spinner
+            repeatSp.setAdapter(repeatAdapter);
+            dateSp.setAdapter(dateAdapter);
+            timeSp.setAdapter(timeAdapter);
+
             dialog.show();
             return true;
+
         }else{
+
             return false;
+
         }
     }
     // menu bar for add reminder end

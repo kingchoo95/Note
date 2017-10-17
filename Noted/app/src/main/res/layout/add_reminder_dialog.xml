@@ -9,6 +9,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="279dp"
+        android:layout_weight="0.31"
         android:orientation="vertical"
         android:weightSum="1">
 
@@ -53,13 +54,16 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="119dp"
+            android:layout_weight="0.50"
             android:orientation="vertical"
+            android:paddingBottom="5dp"
             android:weightSum="1">
 
             <Spinner
                 android:id="@+id/spinnerDateId"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_weight="0.33"
                 android:paddingBottom="5dp"
                 android:paddingLeft="3dp"
                 android:paddingRight="3dp"
@@ -69,6 +73,7 @@
                 android:id="@+id/spinnerTimeId"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_weight="0.34"
                 android:paddingBottom="5dp"
                 android:paddingLeft="3dp"
                 android:paddingRight="3dp"
@@ -78,29 +83,31 @@
                 android:id="@+id/spinnerRepeatId"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_weight="0.26"
                 android:paddingBottom="5dp"
                 android:paddingLeft="3dp"
                 android:paddingRight="3dp"
                 android:paddingTop="5dp" />
 
-            <EditText
-                android:id="@+id/plainTextSearchLocationId"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="textPersonName"
-                android:paddingBottom="5dp"
-                android:paddingEnd="5dp"
-                android:text="Add a location" />
-
         </LinearLayout>
+
+        <EditText
+            android:id="@+id/plainTextSearchLocationId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.11"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:paddingBottom="5dp"
+            android:paddingTop="15dp"
+            android:text="Add a location" />
 
         <GridLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.33"
+            android:layout_weight="0.10"
             android:columnCount="2"
-            android:paddingTop="20dp"
+            android:paddingTop="5dp"
             android:rowCount="1">
 
             <TextView
