@@ -91,7 +91,7 @@
 
         </LinearLayout>
 
-        <EditText
+        <!--<EditText
             android:id="@+id/plainTextSearchLocationId"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -100,8 +100,16 @@
             android:inputType="textPersonName"
             android:paddingBottom="5dp"
             android:paddingTop="15dp"
-            android:text="Add a location" />
-
+            android:text="Add a location" />-->
+        <fragment
+            android:id="@+id/place_autocomplete_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="5dp"
+            android:paddingTop="15dp"
+            android:text="Add a location"
+            android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+            />
         <GridLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
