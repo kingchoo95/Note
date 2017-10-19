@@ -1,7 +1,9 @@
 package com.david.noted;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -19,6 +21,8 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
+
+import java.util.HashSet;
 
 public class NoteEditorActivity extends AppCompatActivity {
 
@@ -51,10 +55,11 @@ public class NoteEditorActivity extends AppCompatActivity {
         if(noteId != -1 ){
 
             editTextTitle.setText(MainActivity.titles.get(noteId));
-            //editTextNotes.setText(MainActivity.notes.get(noteId));
+            editTextNotes.setText(MainActivity.notes.get(noteId));
+
         }else{
             MainActivity.titles.add("");
-           // MainActivity.notes.add("");
+            MainActivity.notes.add("");
             noteId = MainActivity.titles.size() - 1;
             MainActivity.arrayAdapter.notifyDataSetChanged();
         }
@@ -70,6 +75,13 @@ public class NoteEditorActivity extends AppCompatActivity {
 
                 MainActivity.titles.set(noteId,String.valueOf(s));
                 MainActivity.arrayAdapter.notifyDataSetChanged();
+
+                SharedPreferences sharedPreferencesTitles = getApplicationContext().getSharedPreferences("com.david.noted", Context.MODE_PRIVATE);
+
+                HashSet<String> setTitles = new HashSet<String>(MainActivity.titles);
+
+                sharedPreferencesTitles.edit().putStringSet("titles",setTitles).apply();
+
             }
 
             @Override
@@ -78,6 +90,30 @@ public class NoteEditorActivity extends AppCompatActivity {
             }
         });
 
+        editTextNotes.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                MainActivity.notes.set(noteId,String.valueOf(s));
+                MainActivity.arrayAdapter.notifyDataSetChanged();
+
+                SharedPreferences sharedPreferencesNotes = getApplicationContext().getSharedPreferences("com.david.noted", Context.MODE_PRIVATE);
+
+                HashSet<String> setNotes = new HashSet<String>(MainActivity.notes);
+
+                sharedPreferencesNotes.edit().putStringSet("notes",setNotes).apply();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
 
     }
     // menu bar for add reminder start

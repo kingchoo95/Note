@@ -1,7 +1,9 @@
 package com.david.noted;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AlertDialog;
@@ -17,6 +19,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -52,15 +55,35 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        titles.add("Do more exercise");
+
         ListView listView = (ListView) findViewById(R.id.notesListViewId);
 
         //mTextMessage = (TextView) findViewById(R.id.message);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.addnote_menu);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-        arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1,titles);
 
+
+
+
+       SharedPreferences sharedPreferencesNotes = getApplicationContext().getSharedPreferences("com.david.noted", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferencesTitles = getApplicationContext().getSharedPreferences("com.david.noted", Context.MODE_PRIVATE);
+
+       HashSet<String> setNotes = (HashSet<String>) sharedPreferencesNotes.getStringSet("notes",null);
+        HashSet<String> setTitles =  (HashSet<String>) sharedPreferencesTitles.getStringSet("titles",null);
+
+
+        if(setTitles == null){
+            titles.add("Do more exercise");
+            notes.add("do push up 200 times");
+        }else{
+            notes = new ArrayList(setNotes);
+            titles = new ArrayList(setTitles);
+        }
+
+
+        //create arrayadapter and set it to list view
+        arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1,titles);
         listView.setAdapter(arrayAdapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -89,7 +112,17 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 titles.remove(itemToDelete);
+                                notes.remove(itemToDelete);
                                 MainActivity.arrayAdapter.notifyDataSetChanged();
+
+                               SharedPreferences sharedPreferencesNotes = getApplicationContext().getSharedPreferences("com.david.noted", Context.MODE_PRIVATE);
+                                SharedPreferences sharedPreferencesTitles = getApplicationContext().getSharedPreferences("com.david.noted", Context.MODE_PRIVATE);
+
+                                HashSet<String> setNotes = new HashSet<String>(MainActivity.notes);
+                                HashSet<String> setTitles = new HashSet<String>(MainActivity.titles);
+
+                                sharedPreferencesNotes.edit().putStringSet("notes",setNotes).apply();
+                                sharedPreferencesTitles.edit().putStringSet("titles",setTitles).apply();
                             }
                         }).setNegativeButton("No",null).show();
                 return true;
