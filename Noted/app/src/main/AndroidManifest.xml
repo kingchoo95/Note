@@ -20,7 +20,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".NoteEditorActivity"></activity>
-        <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyAFaDnJ6nYukwqlps4CgaXWfv2eC27LW-U" />
+        <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyACETsWYLN4no4HlnCjv5rfRbPDdr0EjJk" />
     </application>
 
 </manifest>

@@ -1,19 +1,25 @@
 package com.david.noted;
 
 import android.app.Dialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.DatabaseUtils;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.Window;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
@@ -31,37 +37,61 @@ public class NoteEditorActivity extends AppCompatActivity {
     String times[]={"Select a Time"};
     String repeats[]={"Does not repeat","Daily","Weekly","Monthly","Yearly"};
     int noteId;
-
+    Intent intent;
+    SQLiteDatabase noteDB;
     //defines array adapter of string type
     ArrayAdapter dateAdapter,timeAdapter,repeatAdapter;
 
+    EditText editTextTitle,editTextNotes;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_editor);
 
+        noteDB = openOrCreateDatabase("Reminders", MODE_PRIVATE, null);
         dateAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, dates);
         timeAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, times);
         repeatAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, repeats);
 
-        EditText editTextTitle = (EditText) findViewById(R.id.editTextTitleId);
-        EditText editTextNotes = (EditText) findViewById(R.id.editTextAddNoteHereId);
+        editTextTitle = (EditText) findViewById(R.id.editTextTitleId);
+        editTextNotes = (EditText) findViewById(R.id.editTextAddNoteHereId);
 
-        Intent intent = getIntent();
+        intent = getIntent();
 
-        noteId = intent.getIntExtra("noteId",-1);
+        noteId = intent.getIntExtra("noteId",noteId);
 
         if(noteId != -1 ){
 
-            editTextTitle.setText(MainActivity.titles.get(noteId));
-            editTextNotes.setText(MainActivity.notes.get(noteId));
+
+
+            Cursor c = noteDB.rawQuery("SELECT * FROM reminders WHERE id = " + Integer.toString(noteId+1)+ "", null);
+
+            int idIndex = c.getColumnIndex("id");
+            int titleIndex = c.getColumnIndex("title");
+            int noteIndex = c.getColumnIndex("note");
+            int dateIndex = c.getColumnIndex("date");
+            int locationIndex = c.getColumnIndex("location");
+
+            //Log.i("test",Integer.toString(locationIndex));
+            //Log.i("test",Integer.toString(titleIndex));
+            //Log.i("test",Integer.toString(idIndex));
+
+            c.moveToFirst();
+
+            Log.i("Result here",Integer.toString(c.getInt(idIndex)) + c.getString(titleIndex) + c.getString(noteIndex) + c.getString(dateIndex) + c.getString(locationIndex));
+
+            editTextTitle.setText(c.getString(titleIndex));
+            //editTextNotes.setText(c.getString(noteIndex));
+
+
+
 
         }else{
-            MainActivity.titles.add("");
-            MainActivity.notes.add("");
+
+            Log.i("this is else","else");
             noteId = MainActivity.titles.size() - 1;
-            MainActivity.arrayAdapter.notifyDataSetChanged();
+            //MainActivity.arrayAdapter.notifyDataSetChanged();
         }
 
         editTextTitle.addTextChangedListener(new TextWatcher() {
@@ -73,14 +103,15 @@ public class NoteEditorActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-                MainActivity.titles.set(noteId,String.valueOf(s));
-                MainActivity.arrayAdapter.notifyDataSetChanged();
+                //MainActivity.titles.set(noteId,String.valueOf(s));
+                //MainActivity.arrayAdapter.notifyDataSetChanged();
 
-                SharedPreferences sharedPreferencesTitles = getApplicationContext().getSharedPreferences("com.david.noted", Context.MODE_PRIVATE);
 
-                HashSet<String> setTitles = new HashSet<String>(MainActivity.titles);
+                //SharedPreferences sharedPreferencesTitles = getApplicationContext().getSharedPreferences("com.david.noted", Context.MODE_PRIVATE);
 
-                sharedPreferencesTitles.edit().putStringSet("titles",setTitles).apply();
+               // HashSet<String> setTitles = new HashSet<String>(MainActivity.titles);
+
+                //sharedPreferencesTitles.edit().putStringSet("titles",setTitles).apply();
 
             }
 
@@ -90,30 +121,7 @@ public class NoteEditorActivity extends AppCompatActivity {
             }
         });
 
-        editTextNotes.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                MainActivity.notes.set(noteId,String.valueOf(s));
-                MainActivity.arrayAdapter.notifyDataSetChanged();
-
-                SharedPreferences sharedPreferencesNotes = getApplicationContext().getSharedPreferences("com.david.noted", Context.MODE_PRIVATE);
-
-                HashSet<String> setNotes = new HashSet<String>(MainActivity.notes);
-
-                sharedPreferencesNotes.edit().putStringSet("notes",setNotes).apply();
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
 
     }
     // menu bar for add reminder start
@@ -176,7 +184,34 @@ public class NoteEditorActivity extends AppCompatActivity {
     }
     // menu bar for add reminder end
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)  {
 
+        noteId = intent.getIntExtra("noteId",noteId);
+        if (Integer.parseInt(android.os.Build.VERSION.SDK) > 5
+                && keyCode == KeyEvent.KEYCODE_BACK
+                && event.getRepeatCount() == 0) {
+
+
+            if(noteId ==-1){
+                SQLiteDatabase noteDB = openOrCreateDatabase("Reminders", MODE_PRIVATE, null);
+                int numRows = (int) DatabaseUtils.queryNumEntries(noteDB, "reminders");
+                noteDB.execSQL("INSERT INTO reminders (id, title, note, date, location) VALUES ( " + Integer.toString(numRows+1) + ",'" + editTextTitle.getText().toString() + "' ,'" + editTextNotes.getText().toString() + "' ,'dog','dog')");
+
+                MainActivity.titles.add(editTextTitle.getText().toString());
+                MainActivity.arrayAdapter.notifyDataSetChanged();
+                onBackPressed();
+                return true;
+            }else{
+                noteDB.execSQL("UPDATE reminders SET  title= '"+ editTextTitle.getText().toString() +"' WHERE id = "+ Integer.toString(noteId+1)+"");
+                MainActivity.titles.set(noteId,editTextTitle.getText().toString());
+                MainActivity.arrayAdapter.notifyDataSetChanged();
+            }
+
+
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 
 
 
