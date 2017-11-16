@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
         try{
 
             SQLiteDatabase noteDB = this.openOrCreateDatabase("Reminders", MODE_PRIVATE, null);
-            noteDB.execSQL("CREATE TABLE IF NOT EXISTS reminders (id INTEGER, title VARCHAR, note VARCHAR, date VARCHAR, location VARCHAR)");
+            noteDB.execSQL("CREATE TABLE IF NOT EXISTS reminders (id INTEGER, title VARCHAR, note VARCHAR, reminderType VARCHAR, date VARCHAR, time VARCHAR, repeatBy VARCHAR, location VARCHAR)");
 
 
             Cursor c = noteDB.rawQuery("SELECT * FROM reminders",null);
@@ -72,13 +72,16 @@ public class MainActivity extends AppCompatActivity {
             int idIndex = c.getColumnIndex("id");
             int titleIndex = c.getColumnIndex("title");
             int noteIndex = c.getColumnIndex("note");
+            int reminderTypeIndex = c.getColumnIndex("reminderType");
             int dateIndex = c.getColumnIndex("date");
+            int timeIndex = c.getColumnIndex("time");
+            int repeatByIndex = c.getColumnIndex("repeatBy");
             int locationIndex = c.getColumnIndex("location");
 
             c.moveToFirst();
 
             while(c != null){
-                Log.i("Result",Integer.toString(c.getInt(idIndex)) + c.getString(titleIndex) + c.getString(noteIndex) + c.getString(dateIndex) + c.getString(locationIndex));
+                Log.i("Result",Integer.toString(c.getInt(idIndex)) + c.getString(titleIndex) + c.getString(noteIndex) +  c.getString(reminderTypeIndex) + c.getString(dateIndex) +  c.getString(timeIndex) +  c.getString(repeatByIndex) +c.getString(locationIndex));
                 titles.add(c.getString(titleIndex));
                 c.moveToNext();
             }
@@ -101,25 +104,6 @@ public class MainActivity extends AppCompatActivity {
         if(titles != null){
             listView.setAdapter(arrayAdapter);
         }
-
-
-
-
-        //SharedPreferences sharedPreferencesNotes = getApplicationContext().getSharedPreferences("com.david.noted", Context.MODE_PRIVATE);
-        //SharedPreferences sharedPreferencesTitles = getApplicationContext().getSharedPreferences("com.david.noted", Context.MODE_PRIVATE);
-
-        //HashSet<String> setNotes = (HashSet<String>) sharedPreferencesNotes.getStringSet("notes",null);
-        //HashSet<String> setTitles =  (HashSet<String>) sharedPreferencesTitles.getStringSet("titles",null);
-
-
-       // if(setTitles == null){
-        //    titles.add("Do more exercise");
-        //    notes.add("do push up 200 times");
-        //}else{
-        //    notes = new ArrayList(setNotes);
-       //     titles = new ArrayList(setTitles);
-       // }
-
 
 
 
@@ -154,18 +138,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 SQLiteDatabase noteDB = openOrCreateDatabase("Reminders", MODE_PRIVATE, null);
                                 noteDB.execSQL("DELETE FROM reminders WHERE id = " + Integer.toString(itemToDelete+1)+ "");
-                                //SharedPreferences sharedPreferencesNotes = getApplicationContext().getSharedPreferences("com.david.noted", Context.MODE_PRIVATE);
-                               //SharedPreferences sharedPreferencesTitles = getApplicationContext().getSharedPreferences("com.david.noted", Context.MODE_PRIVATE);
 
-                                //HashSet<String> setNotes = new HashSet<String>(MainActivity.notes);
-                                //HashSet<String> setTitles = new HashSet<String>(MainActivity.titles);
-
-                                //sharedPreferencesNotes.edit().putStringSet("notes",setNotes).apply();
-                                //sharedPreferencesTitles.edit().putStringSet("titles",setTitles).apply();
-                                //while()
-                                //noteDB.execSQL("UPDATE reminders SET id = , id = ");
-
-                                //reassign id when delete
                                 int numRows = (int)DatabaseUtils.queryNumEntries(noteDB, "reminders");
                                 Log.i("o0o", Integer.toString(numRows));
                                 selectId = itemToDelete+1 ;

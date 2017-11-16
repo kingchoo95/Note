@@ -24,6 +24,7 @@
             android:textStyle="bold" />
 
         <RadioGroup
+            android:id="@+id/radioReminderType"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -33,6 +34,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:checked="true"
+                android:tag="time"
                 android:text="Time" />
 
             <RadioButton
@@ -40,6 +43,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:tag="place"
                 android:text="Place" />
 
             <RadioButton
@@ -47,6 +51,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:tag="time and place"
                 android:text="Time and Place" />
 
         </RadioGroup>
@@ -59,31 +64,36 @@
             android:paddingBottom="5dp"
             android:weightSum="1">
 
-            <Spinner
-                android:id="@+id/spinnerDateId"
+            <TextView
+                android:id="@+id/textViewDateId"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.33"
+                android:layout_weight="0.32"
                 android:paddingBottom="5dp"
-                android:paddingLeft="3dp"
-                android:paddingRight="3dp"
-                android:paddingTop="5dp" />
+                android:paddingEnd="5dp"
+                android:paddingLeft="5dp"
+                android:paddingTop="5dp"
+                android:text="Add Date"
+                android:textSize="20sp" />
 
-            <Spinner
-                android:id="@+id/spinnerTimeId"
+            <TextView
+                android:id="@+id/textViewTimeId"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.34"
+                android:layout_weight="0.30"
+                android:hint="Add Time"
                 android:paddingBottom="5dp"
-                android:paddingLeft="3dp"
-                android:paddingRight="3dp"
-                android:paddingTop="5dp" />
+                android:paddingEnd="3dp"
+                android:paddingLeft="5dp"
+                android:paddingTop="3dp"
+                android:textSize="20sp" />
 
             <Spinner
                 android:id="@+id/spinnerRepeatId"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.26"
+                android:hint="Add Time"
                 android:paddingBottom="5dp"
                 android:paddingLeft="3dp"
                 android:paddingRight="3dp"
@@ -103,13 +113,12 @@
             android:text="Add a location" />-->
         <fragment
             android:id="@+id/place_autocomplete_fragment"
+            android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="5dp"
-            android:paddingTop="15dp"
-            android:text="Add a location"
-            android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
-            />
+            android:paddingTop="15dp" />
+
         <GridLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
