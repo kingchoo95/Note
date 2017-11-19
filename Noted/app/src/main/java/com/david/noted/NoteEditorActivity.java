@@ -68,6 +68,9 @@ public class NoteEditorActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_editor);
+        //services to check condition
+        Intent intent = new Intent(this, CheckConditionService.class);
+        startService(intent);
 
         noteDB = openOrCreateDatabase("Reminders", MODE_PRIVATE, null);
         repeatAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, repeats);
@@ -79,11 +82,11 @@ public class NoteEditorActivity extends AppCompatActivity {
         dialog = new Dialog(NoteEditorActivity.this);
         dialog.setContentView(R.layout.add_reminder_dialog);
         noteId = intent.getIntExtra("noteId",noteId);
-
+        Log.i("noteId",Integer.toString(noteId));
         if(noteId != -1 ){
 
             Cursor c = noteDB.rawQuery("SELECT * FROM reminders WHERE id = " + Integer.toString(noteId+1)+ "", null);
-
+            Log.i("noteId",Integer.toString(noteId));
             int idIndex = c.getColumnIndex("id");
             int titleIndex = c.getColumnIndex("title");
             int noteIndex = c.getColumnIndex("note");
@@ -110,8 +113,8 @@ public class NoteEditorActivity extends AppCompatActivity {
         }else{
 
 
-            noteId = MainActivity.titles.size() - 1;
-            //MainActivity.arrayAdapter.notifyDataSetChanged();
+            //noteId = MainActivity.titles.size() - 1;
+            MainActivity.arrayAdapter.notifyDataSetChanged();
         }
 
     }
@@ -261,14 +264,15 @@ public class NoteEditorActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event)  {
 
-        noteId = intent.getIntExtra("noteId",noteId);
+//        noteId = intent.getIntExtra("noteId",noteId);
         if (Integer.parseInt(android.os.Build.VERSION.SDK) > 5
                 && keyCode == KeyEvent.KEYCODE_BACK
                 && event.getRepeatCount() == 0) {
-
+            Log.i("noteId",Integer.toString(noteId));
             if(noteId ==-1){
                 SQLiteDatabase noteDB = openOrCreateDatabase("Reminders", MODE_PRIVATE, null);
                 int numRows = (int) DatabaseUtils.queryNumEntries(noteDB, "reminders");
+                Log.i("noteId","-1");
                 noteDB.execSQL("INSERT INTO reminders (id, title, note, reminderType, date, time, repeatBy, location) VALUES ( " + Integer.toString(numRows+1) + ",'" + editTextTitle.getText().toString() + "' ,'" + editTextNotes.getText().toString() + "' ,'"+ dialogReminderType +"',  '"+ dialogDate +"', '"+  dialogTime +"','"+ dialogRepeatBy +"', '"+ dialogLocation +"')");
 
                 MainActivity.titles.add(editTextTitle.getText().toString());
@@ -276,6 +280,7 @@ public class NoteEditorActivity extends AppCompatActivity {
                 onBackPressed();
                 return true;
             }else{
+                Log.i("noteId","other");
                 noteDB.execSQL("UPDATE reminders SET  title= '"+ editTextTitle.getText().toString() +"',note = '"+ editTextNotes.getText().toString() +"',reminderType = '" + dialogReminderType + "',date = '" + dialogDate + "',time = '"+ dialogTime +"', repeatBy = '" + dialogRepeatBy + "', location = '"+ dialogLocation +"'  WHERE id = "+ Integer.toString(noteId+1)+"");
                 MainActivity.titles.set(noteId,editTextTitle.getText().toString());
                 MainActivity.arrayAdapter.notifyDataSetChanged();
@@ -284,5 +289,6 @@ public class NoteEditorActivity extends AppCompatActivity {
         }
         return super.onKeyDown(keyCode, event);
     }
+
 
 }

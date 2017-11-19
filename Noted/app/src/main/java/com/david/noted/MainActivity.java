@@ -7,7 +7,9 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -23,6 +25,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -87,9 +91,12 @@ public class MainActivity extends AppCompatActivity {
             }
 
         }catch(Exception e){
-        e.printStackTrace();
+            e.printStackTrace();
     }
 
+
+        Intent intent = new Intent(this, CheckConditionService.class);
+        startService(intent);
 
 
         ListView listView = (ListView) findViewById(R.id.notesListViewId);
@@ -99,7 +106,6 @@ public class MainActivity extends AppCompatActivity {
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         //create arrayadapter and set it to list view
-
         arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1,titles);
         if(titles != null){
             listView.setAdapter(arrayAdapter);
@@ -154,6 +160,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
     }
 
     //search menu on header start
@@ -196,5 +203,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
     //search menu on header end
+
+
 
 }
