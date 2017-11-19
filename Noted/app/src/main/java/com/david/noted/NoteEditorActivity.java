@@ -192,7 +192,7 @@ public class NoteEditorActivity extends AppCompatActivity {
             dDateSetListener = new DatePickerDialog.OnDateSetListener() {
                 @Override
                 public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                    getReminderDate = Integer.toString(dayOfMonth)+"/"+Integer.toString(month)+"/"+Integer.toString(year);
+                    getReminderDate = Integer.toString(year)+"-"+Integer.toString(month+1)+"-"+Integer.toString(dayOfMonth);
                     textViewDateId.setText(getReminderDate);
                 }
             };

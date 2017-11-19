@@ -9,6 +9,8 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -26,7 +28,16 @@ class CheckConditionService extends Service{
     }
 
     public void checkCondition() {
+        Calendar cal = Calendar.getInstance();
+        System.out.println("Current time => "+cal.getTime());
 
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String formattedDate = df.format(cal.getTime());
+        // formattedDate have current date/time
+        Log.i("formattedDate",formattedDate);
+        String[] dateNow = formattedDate.split(" ");
+
+        String timeNow =  dateNow[1].substring(0,5);
         try{
 
             SQLiteDatabase noteDB = this.openOrCreateDatabase("Reminders", MODE_PRIVATE, null);
@@ -48,8 +59,15 @@ class CheckConditionService extends Service{
             c.moveToFirst();
 
             while(c != null){
-                Log.i("Service",Integer.toString(c.getInt(idIndex)) + c.getString(titleIndex) + c.getString(noteIndex) +  c.getString(reminderTypeIndex) + c.getString(dateIndex) +  c.getString(timeIndex) +  c.getString(repeatByIndex) +c.getString(locationIndex));
+                //Log.i("Service",Integer.toString(c.getInt(idIndex)) + c.getString(titleIndex) + c.getString(noteIndex) +  c.getString(reminderTypeIndex) + c.getString(dateIndex) +  c.getString(timeIndex) +  c.getString(repeatByIndex) +c.getString(locationIndex));
+                //Check Condition
 
+                if(dateNow[0].equals(c.getString(dateIndex))){
+                   if(timeNow.equals(c.getString(timeIndex))){
+                       Log.i("time","fuck you madhaven");
+                   }
+                    Log.i("timeNOW",timeNow);
+                }
                 c.moveToNext();
             }
 
