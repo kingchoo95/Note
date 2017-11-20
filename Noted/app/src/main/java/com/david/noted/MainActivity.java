@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(),NoteEditorActivity.class);
                 //tell which row the user tap
                 intent.putExtra("noteId",position);
-                Log.i("noteiD" , Integer.toString(position));
+                //Log.i("noteiD" , Integer.toString(position));
 
                 startActivity(intent);
             }
