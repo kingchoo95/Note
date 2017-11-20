@@ -1,5 +1,8 @@
 package com.david.noted;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.database.Cursor;
@@ -55,18 +58,27 @@ class CheckConditionService extends Service{
             int timeIndex = c.getColumnIndex("time");
             int repeatByIndex = c.getColumnIndex("repeatBy");
             int locationIndex = c.getColumnIndex("location");
+            int isTriggerIndex = c.getColumnIndex("isTrigger");
 
             c.moveToFirst();
 
             while(c != null){
-                //Log.i("Service",Integer.toString(c.getInt(idIndex)) + c.getString(titleIndex) + c.getString(noteIndex) +  c.getString(reminderTypeIndex) + c.getString(dateIndex) +  c.getString(timeIndex) +  c.getString(repeatByIndex) +c.getString(locationIndex));
-                //Check Condition
 
-                if(dateNow[0].equals(c.getString(dateIndex))){
-                   if(timeNow.equals(c.getString(timeIndex))){
-                       Log.i("time","fuck you madhaven");
-                   }
-                    Log.i("timeNOW",timeNow);
+                //Check Condition
+                Log.i("DateNow",dateNow[0] + " "+ c.getString(dateIndex));
+                if(c.getInt(isTriggerIndex) == 0) {
+                    if (dateNow[0].equals(c.getString(dateIndex))) {
+
+                        if (timeNow.equals(c.getString(timeIndex))) {
+                            Log.i("alarmtimeout", "alarm ring");
+                            showAlert();
+                            Log.i("alarmtimeout",Integer.toString(c.getInt(idIndex)));
+                            noteDB.execSQL("UPDATE reminders SET isTrigger= '1' WHERE id = "+Integer.toString(c.getInt(idIndex))+"");
+
+                            Log.i("alarmtimeout",Integer.toString(c.getInt(idIndex)) + c.getString(titleIndex) + c.getString(noteIndex) +  c.getString(reminderTypeIndex) + c.getString(dateIndex) +  c.getString(timeIndex) +  c.getString(repeatByIndex) +c.getString(locationIndex) +Integer.toString(c.getInt(isTriggerIndex)));
+                        }
+
+                    }
                 }
                 c.moveToNext();
             }
@@ -93,5 +105,23 @@ class CheckConditionService extends Service{
         checkTimer();
 
         return START_STICKY;
+    }
+
+
+    public void showAlert(){
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivities(getApplicationContext(),1, new Intent[]{intent}, 0);
+        Notification notification = new Notification.Builder(getApplicationContext())
+                .setContentTitle("mdv time to d")
+                .setContentText("ya agree")
+                .setContentIntent(pendingIntent)
+                .addAction(android.R.drawable.sym_action_chat,"Chat", pendingIntent)
+                .setSmallIcon(android.R.drawable.sym_def_app_icon)
+                .build();
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.notify(1, notification);
+
+
     }
 }

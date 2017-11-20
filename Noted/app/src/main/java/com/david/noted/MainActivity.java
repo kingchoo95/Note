@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
         try{
 
             SQLiteDatabase noteDB = this.openOrCreateDatabase("Reminders", MODE_PRIVATE, null);
-            noteDB.execSQL("CREATE TABLE IF NOT EXISTS reminders (id INTEGER, title VARCHAR, note VARCHAR, reminderType VARCHAR, date VARCHAR, time VARCHAR, repeatBy VARCHAR, location VARCHAR)");
+            noteDB.execSQL("CREATE TABLE IF NOT EXISTS reminders (id INTEGER, title VARCHAR, note VARCHAR, reminderType VARCHAR, date VARCHAR, time VARCHAR, repeatBy VARCHAR, location VARCHAR, isTrigger INTEGER)");
 
 
             Cursor c = noteDB.rawQuery("SELECT * FROM reminders",null);
@@ -81,11 +81,12 @@ public class MainActivity extends AppCompatActivity {
             int timeIndex = c.getColumnIndex("time");
             int repeatByIndex = c.getColumnIndex("repeatBy");
             int locationIndex = c.getColumnIndex("location");
+            int isTriggerIndex = c.getColumnIndex("isTrigger");
 
             c.moveToFirst();
 
             while(c != null){
-                Log.i("Result",Integer.toString(c.getInt(idIndex)) + c.getString(titleIndex) + c.getString(noteIndex) +  c.getString(reminderTypeIndex) + c.getString(dateIndex) +  c.getString(timeIndex) +  c.getString(repeatByIndex) +c.getString(locationIndex));
+                Log.i("Result",Integer.toString(c.getInt(idIndex)) + c.getString(titleIndex) + c.getString(noteIndex) +  c.getString(reminderTypeIndex) + c.getString(dateIndex) +  c.getString(timeIndex) +  c.getString(repeatByIndex) +c.getString(locationIndex) +Integer.toString(c.getInt(isTriggerIndex)));
                 titles.add(c.getString(titleIndex));
                 c.moveToNext();
             }

@@ -45,6 +45,7 @@ public class NoteEditorActivity extends AppCompatActivity {
     String locationString = null;
     String getReminderDate= null;
     String getReminderTime = null;
+
     String getDialogReminderTypeString = null;
     //make string array for spinner
     String repeats[]={"Does not repeat","Daily","Weekly","Monthly","Yearly"};
@@ -192,7 +193,21 @@ public class NoteEditorActivity extends AppCompatActivity {
             dDateSetListener = new DatePickerDialog.OnDateSetListener() {
                 @Override
                 public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                    getReminderDate = Integer.toString(year)+"-"+Integer.toString(month+1)+"-"+Integer.toString(dayOfMonth);
+                    String newMonthFormat;
+                    String newDayOfMonthFormat;
+                    if(month+1 >=1 && month+1 <= 9){
+                        newMonthFormat = "0"+Integer.toString(month+1);
+                    }else {
+                        newMonthFormat = Integer.toString(month+1);
+                    }
+                    if(dayOfMonth >=1 && dayOfMonth <= 9){
+                        newDayOfMonthFormat = "0"+Integer.toString(dayOfMonth);
+                    }else {
+                        newDayOfMonthFormat = Integer.toString(dayOfMonth);
+                    }
+
+
+                    getReminderDate = Integer.toString(year)+"-"+newMonthFormat+"-"+newDayOfMonthFormat;
                     textViewDateId.setText(getReminderDate);
                 }
             };
@@ -213,7 +228,20 @@ public class NoteEditorActivity extends AppCompatActivity {
                 @Override
                 public void onTimeSet(android.widget.TimePicker view,
                                       int hourOfDay, int minute) {
-                    getReminderTime = Integer.toString(hourOfDay)+":"+Integer.toString(minute);
+                    String newMinuteFormat;
+                    String newHourFormat;
+                    if(hourOfDay>=0 &&hourOfDay<=9 ){
+                        newHourFormat ="0"+Integer.toString(hourOfDay);
+                    }else{
+                        newHourFormat =Integer.toString(hourOfDay);
+                    }
+
+                    if (minute>=0 &&minute<=9){
+                         newMinuteFormat = "0"+Integer.toString(minute);
+                    }else{
+                        newMinuteFormat= Integer.toString(minute);
+                    }
+                    getReminderTime = newHourFormat+":"+ newMinuteFormat;
                     textViewTimeId.setText(getReminderTime);
                 }
             };
@@ -268,12 +296,12 @@ public class NoteEditorActivity extends AppCompatActivity {
         if (Integer.parseInt(android.os.Build.VERSION.SDK) > 5
                 && keyCode == KeyEvent.KEYCODE_BACK
                 && event.getRepeatCount() == 0) {
-            Log.i("noteId",Integer.toString(noteId));
+
             if(noteId ==-1){
                 SQLiteDatabase noteDB = openOrCreateDatabase("Reminders", MODE_PRIVATE, null);
                 int numRows = (int) DatabaseUtils.queryNumEntries(noteDB, "reminders");
                 Log.i("noteId","-1");
-                noteDB.execSQL("INSERT INTO reminders (id, title, note, reminderType, date, time, repeatBy, location) VALUES ( " + Integer.toString(numRows+1) + ",'" + editTextTitle.getText().toString() + "' ,'" + editTextNotes.getText().toString() + "' ,'"+ dialogReminderType +"',  '"+ dialogDate +"', '"+  dialogTime +"','"+ dialogRepeatBy +"', '"+ dialogLocation +"')");
+                noteDB.execSQL("INSERT INTO reminders (id, title, note, reminderType, date, time, repeatBy, location, isTrigger) VALUES ( " + Integer.toString(numRows+1) + ",'" + editTextTitle.getText().toString() + "' ,'" + editTextNotes.getText().toString() + "' ,'"+ dialogReminderType +"',  '"+ dialogDate +"', '"+  dialogTime +"','"+ dialogRepeatBy +"', '"+ dialogLocation +"','0')");
 
                 MainActivity.titles.add(editTextTitle.getText().toString());
                 MainActivity.arrayAdapter.notifyDataSetChanged();
@@ -281,7 +309,7 @@ public class NoteEditorActivity extends AppCompatActivity {
                 return true;
             }else{
                 Log.i("noteId","other");
-                noteDB.execSQL("UPDATE reminders SET  title= '"+ editTextTitle.getText().toString() +"',note = '"+ editTextNotes.getText().toString() +"',reminderType = '" + dialogReminderType + "',date = '" + dialogDate + "',time = '"+ dialogTime +"', repeatBy = '" + dialogRepeatBy + "', location = '"+ dialogLocation +"'  WHERE id = "+ Integer.toString(noteId+1)+"");
+                noteDB.execSQL("UPDATE reminders SET title= '"+ editTextTitle.getText().toString() +"',note = '"+ editTextNotes.getText().toString() +"',reminderType = '" + dialogReminderType + "',date = '" + dialogDate + "',time = '"+ dialogTime +"', repeatBy = '" + dialogRepeatBy + "', location = '"+ dialogLocation +"'  WHERE id = "+ Integer.toString(noteId+1)+"");
                 MainActivity.titles.set(noteId,editTextTitle.getText().toString());
                 MainActivity.arrayAdapter.notifyDataSetChanged();
             }
