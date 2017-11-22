@@ -47,6 +47,12 @@ public class NoteEditorActivity extends AppCompatActivity {
     String locationString = null;
     String getReminderDate= null;
     String getReminderTime = null;
+    Float getPlaceLatitude;
+    Float getPlaceLongitude;
+    Float placeLatitude;
+    Float placeLongitude;
+    int getIsTrigger;
+
 
     String getDialogReminderTypeString = null;
     //make string array for spinner
@@ -98,6 +104,7 @@ public class NoteEditorActivity extends AppCompatActivity {
             int timeIndex = c.getColumnIndex("time");
             int repeatByIndex = c.getColumnIndex("repeatBy");
             int locationIndex = c.getColumnIndex("location");
+            int isTriggerIndex = c.getColumnIndex("isTrigger");
 
             c.moveToFirst();
 
@@ -105,13 +112,13 @@ public class NoteEditorActivity extends AppCompatActivity {
 
             editTextTitle.setText(c.getString(titleIndex));
             editTextNotes.setText(c.getString(noteIndex));
-            dialogLocation = locationString;
+            //dialogLocation = locationString;
             dialogReminderType = c.getString(reminderTypeIndex);
             dialogDate = c.getString(dateIndex);
             dialogTime = c.getString(timeIndex);
             dialogRepeatBy = c.getString(repeatByIndex);
             dialogLocation =  c.getString(locationIndex);
-
+            getIsTrigger =  c.getInt(isTriggerIndex);
 
         }else{
 
@@ -160,7 +167,11 @@ public class NoteEditorActivity extends AppCompatActivity {
                     // TODO: Get info about the selected place.
                     locationString = place.getName().toString();
 
-
+                    getPlaceLatitude = (float) place.getLatLng().latitude;
+                    getPlaceLongitude = (float) place.getLatLng().longitude;
+                    //Log.i("theplace",place.getLatLng().toString());
+                    //Log.i("theplace",getPlaceLatitude.toString());
+                    //Log.i("theplace",getPlaceLongitude.toString());
                 }
 
                 @Override
@@ -188,6 +199,7 @@ public class NoteEditorActivity extends AppCompatActivity {
                     int day = cal.get(Calendar.DAY_OF_MONTH);
 
                     DatePickerDialog dateDialog = new DatePickerDialog(NoteEditorActivity.this, android.R.style.Theme_Holo_Light_Dialog_NoActionBar, dDateSetListener,year, month,day);
+                    //to fix white background
                     dateDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                     dateDialog.show();
                 }
@@ -256,6 +268,9 @@ public class NoteEditorActivity extends AppCompatActivity {
                     dialogDate =null;
                     dialogTime = null;
                     dialogReminderType =null;
+                    placeLatitude =null;
+                    placeLongitude=null;
+
                     dialog.dismiss();
 
                 }
@@ -269,11 +284,13 @@ public class NoteEditorActivity extends AppCompatActivity {
                     dialogRepeatBy = repeatSp.getSelectedItem().toString();
                     dialogDate = getReminderDate;
                     dialogTime = getReminderTime;
-
+                    getIsTrigger = 0;
                     //get and assign radio button value
                     int selectedId = radioGroupReminderType.getCheckedRadioButtonId();
                     RadioButton radioButton = (RadioButton) dialog.findViewById(selectedId);
                     dialogReminderType = radioButton.getText().toString();
+                    placeLatitude =getPlaceLatitude;
+                    placeLongitude=getPlaceLongitude;
                     dialog.dismiss();
 
                 }
@@ -304,15 +321,15 @@ public class NoteEditorActivity extends AppCompatActivity {
                 SQLiteDatabase noteDB = openOrCreateDatabase("Reminders", MODE_PRIVATE, null);
                 int numRows = (int) DatabaseUtils.queryNumEntries(noteDB, "reminders");
                 Log.i("noteId","-1");
-                noteDB.execSQL("INSERT INTO reminders (id, title, note, reminderType, date, time, repeatBy, location, isTrigger) VALUES ( " + Integer.toString(numRows+1) + ",'" + editTextTitle.getText().toString() + "' ,'" + editTextNotes.getText().toString() + "' ,'"+ dialogReminderType +"',  '"+ dialogDate +"', '"+  dialogTime +"','"+ dialogRepeatBy +"', '"+ dialogLocation +"','0')");
+                noteDB.execSQL("INSERT INTO reminders (id, title, note, reminderType, date, time, repeatBy, location, latitude, longitude, isTrigger) VALUES ( " + Integer.toString(numRows+1) + ",'" + editTextTitle.getText().toString() + "' ,'" + editTextNotes.getText().toString() + "' ,'"+ dialogReminderType +"',  '"+ dialogDate +"', '"+  dialogTime +"','"+ dialogRepeatBy +"', '"+ dialogLocation +"','"+ placeLatitude +"' ,'"+ placeLongitude +"','0')");
 
                 MainActivity.titles.add(editTextTitle.getText().toString());
                 MainActivity.arrayAdapter.notifyDataSetChanged();
                 onBackPressed();
                 return true;
             }else{
-                Log.i("noteId","other");
-                noteDB.execSQL("UPDATE reminders SET title= '"+ editTextTitle.getText().toString() +"',note = '"+ editTextNotes.getText().toString() +"',reminderType = '" + dialogReminderType + "',date = '" + dialogDate + "',time = '"+ dialogTime +"', repeatBy = '" + dialogRepeatBy + "', location = '"+ dialogLocation +"'  WHERE id = "+ Integer.toString(noteId+1)+"");
+                //Log.i("noteId","other");
+                noteDB.execSQL("UPDATE reminders SET title= '"+ editTextTitle.getText().toString() +"',note = '"+ editTextNotes.getText().toString() +"',reminderType = '" + dialogReminderType + "',date = '" + dialogDate + "',time = '"+ dialogTime +"', repeatBy = '" + dialogRepeatBy + "', location = '"+ dialogLocation +"',latitude = '"+ placeLatitude+"', longitude = '"+placeLongitude+"',isTrigger = '"+getIsTrigger +"'  WHERE id = "+ Integer.toString(noteId+1)+"");
                 MainActivity.titles.set(noteId,editTextTitle.getText().toString());
                 MainActivity.arrayAdapter.notifyDataSetChanged();
             }
