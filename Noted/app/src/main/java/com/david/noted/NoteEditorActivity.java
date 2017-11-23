@@ -19,13 +19,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.CalendarView;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
@@ -40,8 +40,8 @@ public class NoteEditorActivity extends AppCompatActivity {
     //variable for dialog reminder
     Dialog dialog;
     String dialogReminderType = null;
-    String dialogDate = null;
-    String dialogTime = null;
+    String dialogDate = "null";
+    String dialogTime = "null";
     String dialogRepeatBy = null;
     String dialogLocation = null;
     String locationString = null;
@@ -104,11 +104,13 @@ public class NoteEditorActivity extends AppCompatActivity {
             int timeIndex = c.getColumnIndex("time");
             int repeatByIndex = c.getColumnIndex("repeatBy");
             int locationIndex = c.getColumnIndex("location");
+            int latitudeIndex = c.getColumnIndex("latitude");
+            int longitudeIndex = c.getColumnIndex("longitude");
             int isTriggerIndex = c.getColumnIndex("isTrigger");
 
             c.moveToFirst();
 
-           Log.i("Result here",Integer.toString(c.getInt(idIndex)) + c.getString(titleIndex) + c.getString(noteIndex) + c.getString(reminderTypeIndex) + c.getString(dateIndex) + c.getString(repeatByIndex) + c.getString(locationIndex));
+           Log.i("Resultdbcontidion",Integer.toString(c.getInt(idIndex)) + c.getString(titleIndex) + c.getString(noteIndex) + c.getString(reminderTypeIndex) + c.getString(dateIndex) + c.getString(repeatByIndex) + c.getString(locationIndex) + c.getString(latitudeIndex)+" " + c.getString(longitudeIndex));
 
             editTextTitle.setText(c.getString(titleIndex));
             editTextNotes.setText(c.getString(noteIndex));
@@ -119,7 +121,9 @@ public class NoteEditorActivity extends AppCompatActivity {
             dialogRepeatBy = c.getString(repeatByIndex);
             dialogLocation =  c.getString(locationIndex);
             getIsTrigger =  c.getInt(isTriggerIndex);
-
+            placeLatitude = c.getFloat(latitudeIndex);
+            placeLongitude = c.getFloat(longitudeIndex) ;
+           // Log.i("Resultdbcontidion",Float.toString(getPlaceLatitude) +" " + Float.toString(getPlaceLongitude));
         }else{
 
 
@@ -183,12 +187,27 @@ public class NoteEditorActivity extends AppCompatActivity {
             //get and assign spinner value
 
             //radioButtonPlace.setChecked(true);
-            dialog.show();
+
             //find textView id for dialog
             TextView saveTextBtn = (TextView) dialog.findViewById(R.id.textViewSaveId);
+            TextView removeTextBtn = (TextView) dialog.findViewById(R.id.textViewRemoveId);
             TextView cancelTextBtn = (TextView) dialog.findViewById(R.id.textViewCancelId);
             final TextView textViewDateId = (TextView) dialog.findViewById(R.id.textViewDateId);
             final TextView textViewTimeId = (TextView) dialog.findViewById(R.id.textViewTimeId);
+
+            Log.i("slap",dialogDate.getClass().getName()+" " +dialogDate.getClass().getName() );
+
+                if((!dialogDate.equals("null") && !dialogTime.equals("null"))){
+
+                    textViewDateId.setText(dialogDate);
+                    textViewTimeId.setText(dialogTime);
+
+                }else{
+                    textViewDateId.setText("Add Date");
+                    textViewTimeId.setText("Add Time");
+
+                }
+
 
             textViewDateId.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -260,43 +279,63 @@ public class NoteEditorActivity extends AppCompatActivity {
                     textViewTimeId.setText(getReminderTime);
                 }
             };
-            cancelTextBtn.setOnClickListener( new View.OnClickListener() {
+            removeTextBtn.setOnClickListener( new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     dialogLocation =null;
                     dialogRepeatBy = null;
-                    dialogDate =null;
-                    dialogTime = null;
+                    dialogDate ="null";
+                    dialogTime = "null";
                     dialogReminderType =null;
-                    placeLatitude =null;
-                    placeLongitude=null;
+                    placeLatitude =(float)200;
+                    placeLongitude=(float)200;
+
+                    textViewDateId.setText("Add Date");
+                    textViewTimeId.setText("Add Time");
+                    dialog.dismiss();
+                }
+            });
+            cancelTextBtn.setOnClickListener( new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
 
                     dialog.dismiss();
 
                 }
             });
-
             saveTextBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     dialogLocation = locationString;
                     //get and assign spinner value
                     dialogRepeatBy = repeatSp.getSelectedItem().toString();
-                    dialogDate = getReminderDate;
-                    dialogTime = getReminderTime;
+
+
                     getIsTrigger = 0;
                     //get and assign radio button value
                     int selectedId = radioGroupReminderType.getCheckedRadioButtonId();
                     RadioButton radioButton = (RadioButton) dialog.findViewById(selectedId);
                     dialogReminderType = radioButton.getText().toString();
-                    placeLatitude =getPlaceLatitude;
-                    placeLongitude=getPlaceLongitude;
-                    dialog.dismiss();
+                    if(getPlaceLatitude == null||getPlaceLongitude==null){
+                        placeLatitude =(float)200;
+                        placeLongitude=(float)200;
+                    }else{
+                        placeLatitude =getPlaceLatitude;
+                        placeLongitude=getPlaceLongitude;
+                    }
 
+                    if((getReminderDate==null || getReminderTime==null)||(dialogDate=="null" || dialogTime=="null")){
+
+                        Toast.makeText(getApplicationContext(),"Please select time and date to save",Toast.LENGTH_SHORT).show();
+                    }else{
+                        dialogDate = getReminderDate;
+                        dialogTime = getReminderTime;
+                        dialog.dismiss();
+
+                    }
                 }
-
             });
-
+            dialog.show();
             return true;
 
 

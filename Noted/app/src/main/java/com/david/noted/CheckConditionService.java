@@ -87,7 +87,7 @@ class CheckConditionService extends Service{
         };
          locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         //noinspection MissingPermission
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5 * 60 * 1000,200, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,  60 * 1000,150, locationListener);
         //Ask for permission
 
     }
@@ -172,7 +172,7 @@ class CheckConditionService extends Service{
                     float distanceInMeters = loc1.distanceTo(loc2);
                     Log.i("location",Float.toString(distanceInMeters));
                     //if less than 30 miters
-                    if(distanceInMeters <= 500){
+                    if(distanceInMeters <= 300){
                         Log.i("alarmtimeout", "alarm ring");
                         selectedId = c.getInt(idIndex)-1;
                         selectedTitle = c.getString(titleIndex);
@@ -205,7 +205,7 @@ class CheckConditionService extends Service{
             Log.i("5sec","pass");
 
             }
-        }, 0, 30*1000);
+        }, 0, 10*1000);
 
 
     }
@@ -236,7 +236,7 @@ class CheckConditionService extends Service{
                 .build();
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        notificationManager.notify(1, notification);
+        notificationManager.notify(selectedId, notification);
 
         //wake phone when sleep
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
@@ -251,6 +251,7 @@ class CheckConditionService extends Service{
         //play default phone sound
         Uri notificationSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notificationSound);
+
         r.play();
 
 

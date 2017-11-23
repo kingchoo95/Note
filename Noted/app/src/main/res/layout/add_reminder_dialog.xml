@@ -81,7 +81,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.30"
-                android:hint="Add Time"
+                android:text="Add Time"
                 android:paddingBottom="5dp"
                 android:paddingEnd="3dp"
                 android:paddingLeft="5dp"
@@ -93,7 +93,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.26"
-                android:hint="Add Time"
                 android:paddingBottom="5dp"
                 android:paddingLeft="3dp"
                 android:paddingRight="3dp"
@@ -122,18 +121,28 @@
         <GridLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.10"
-            android:columnCount="2"
+            android:columnCount="3"
+            android:elevation="1dp"
             android:paddingTop="5dp"
             android:rowCount="1">
+
+            <TextView
+                android:id="@+id/textViewRemoveId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:paddingTop="10dp"
+                android:text="REMOVE" />
 
             <TextView
                 android:id="@+id/textViewCancelId"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
+                android:paddingEnd="5dp"
                 android:paddingLeft="5dp"
-                android:paddingRight="5dp"
                 android:paddingTop="10dp"
                 android:text="CANCEL" />
 
@@ -141,6 +150,7 @@
                 android:id="@+id/textViewSaveId"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="right"
                 android:paddingEnd="5dp"
                 android:paddingLeft="5dp"
                 android:paddingTop="10dp"
