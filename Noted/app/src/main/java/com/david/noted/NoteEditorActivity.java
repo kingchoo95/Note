@@ -39,16 +39,16 @@ public class NoteEditorActivity extends AppCompatActivity {
 
     //variable for dialog reminder
     Dialog dialog;
-    String dialogReminderType = null;
-    String dialogDate = "null";
-    String dialogTime = "null";
-    String dialogRepeatBy = null;
-    String dialogLocation = null;
-    String locationString = null;
-    String getReminderDate= null;
-    String getReminderTime = null;
-    Float getPlaceLatitude;
-    Float getPlaceLongitude;
+    String dialogReminderType = "";
+    String dialogDate = "";
+    String dialogTime = "";
+    String dialogRepeatBy = "";
+    String dialogLocation = "";
+    String locationString = "";
+    String getReminderDate= "";
+    String getReminderTime = "";
+    Float getPlaceLatitude = (float)200;
+    Float getPlaceLongitude = (float)200;
     Float placeLatitude;
     Float placeLongitude;
     int getIsTrigger;
@@ -160,9 +160,15 @@ public class NoteEditorActivity extends AppCompatActivity {
             //set adapter to spinner
             repeatSp.setAdapter(repeatAdapter);
 
-
             PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
                     getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+            if(dialogLocation==""){
+                autocompleteFragment.setHint("Add a location");
+            }else{
+                autocompleteFragment.setText(dialogLocation);
+            }
+
+
 
             //auto complete
             autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
@@ -195,9 +201,9 @@ public class NoteEditorActivity extends AppCompatActivity {
             final TextView textViewDateId = (TextView) dialog.findViewById(R.id.textViewDateId);
             final TextView textViewTimeId = (TextView) dialog.findViewById(R.id.textViewTimeId);
 
-            Log.i("slap",dialogDate.getClass().getName()+" " +dialogDate.getClass().getName() );
+            //Log.i("slap",dialogDate.getClass().getName()+" " +dialogDate.getClass().getName() );
 
-                if((!dialogDate.equals("null") && !dialogTime.equals("null"))){
+                if((!dialogDate.equals("") && !dialogTime.equals(""))){
 
                     textViewDateId.setText(dialogDate);
                     textViewTimeId.setText(dialogTime);
@@ -282,16 +288,20 @@ public class NoteEditorActivity extends AppCompatActivity {
             removeTextBtn.setOnClickListener( new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    dialogLocation =null;
-                    dialogRepeatBy = null;
-                    dialogDate ="null";
-                    dialogTime = "null";
-                    dialogReminderType =null;
+
+                    dialogLocation ="";
+                    dialogRepeatBy = "";
+                    dialogDate ="";
+                    dialogTime = "";
+                    getReminderDate="";
+                    getReminderTime="";
+                    locationString="";
+                    dialogReminderType ="";
                     placeLatitude =(float)200;
                     placeLongitude=(float)200;
-
                     textViewDateId.setText("Add Date");
                     textViewTimeId.setText("Add Time");
+
                     dialog.dismiss();
                 }
             });
@@ -306,6 +316,7 @@ public class NoteEditorActivity extends AppCompatActivity {
             saveTextBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
                     dialogLocation = locationString;
                     //get and assign spinner value
                     dialogRepeatBy = repeatSp.getSelectedItem().toString();
@@ -324,7 +335,7 @@ public class NoteEditorActivity extends AppCompatActivity {
                         placeLongitude=getPlaceLongitude;
                     }
 
-                    if((getReminderDate==null || getReminderTime==null)||(dialogDate=="null" || dialogTime=="null")){
+                    if((getReminderDate=="" || getReminderTime=="")){
 
                         Toast.makeText(getApplicationContext(),"Please select time and date to save",Toast.LENGTH_SHORT).show();
                     }else{
@@ -347,10 +358,29 @@ public class NoteEditorActivity extends AppCompatActivity {
 
     }
     // menu bar for add reminder end
+    public void preventNullValue(){
+        if(dialogLocation==null){
+            dialogLocation="";
+        }
 
+        if(placeLatitude==null){
+            placeLatitude =(float)200;
+        }
+        if(placeLongitude==null){
+
+            placeLongitude=(float)200;
+        }
+        if(dialogReminderType==null){
+            dialogReminderType="";
+        }
+        if(dialogRepeatBy==null){
+            dialogRepeatBy="";
+        }
+    }
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event)  {
-
+        //prevent null value if user did not click add reminder button
+        preventNullValue();
 //        noteId = intent.getIntExtra("noteId",noteId);
         if (Integer.parseInt(android.os.Build.VERSION.SDK) > 5
                 && keyCode == KeyEvent.KEYCODE_BACK

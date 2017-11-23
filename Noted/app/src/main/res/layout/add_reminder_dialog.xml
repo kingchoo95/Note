@@ -8,7 +8,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="279dp"
+        android:layout_height="300dp"
         android:layout_weight="0.31"
         android:orientation="vertical"
         android:weightSum="1">
@@ -17,10 +17,10 @@
             android:id="@+id/textViewAddReminderTitleId"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.11"
+            android:layout_weight="0.20"
             android:text="Add reminder"
             android:textColor="@color/colorBlack"
-            android:textSize="18sp"
+            android:textSize="25sp"
             android:textStyle="bold" />
 
         <RadioGroup
@@ -33,7 +33,7 @@
                 android:id="@+id/radioTimeId"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="2"
                 android:checked="true"
                 android:tag="time"
                 android:text="Time" />
@@ -74,25 +74,25 @@
                 android:paddingLeft="5dp"
                 android:paddingTop="5dp"
                 android:text="Add Date"
-                android:textSize="20sp" />
+                android:textSize="25sp" />
 
             <TextView
                 android:id="@+id/textViewTimeId"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.30"
-                android:text="Add Time"
                 android:paddingBottom="5dp"
                 android:paddingEnd="3dp"
                 android:paddingLeft="5dp"
                 android:paddingTop="3dp"
-                android:textSize="20sp" />
+                android:text="Add Time"
+                android:textSize="25sp" />
 
             <Spinner
                 android:id="@+id/spinnerRepeatId"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.26"
+                android:layout_weight="0.28"
                 android:paddingBottom="5dp"
                 android:paddingLeft="3dp"
                 android:paddingRight="3dp"

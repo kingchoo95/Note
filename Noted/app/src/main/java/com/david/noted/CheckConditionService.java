@@ -87,7 +87,7 @@ class CheckConditionService extends Service{
         };
          locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         //noinspection MissingPermission
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,  60 * 1000,150, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2 * 60 * 1000,500, locationListener);
         //Ask for permission
 
     }
