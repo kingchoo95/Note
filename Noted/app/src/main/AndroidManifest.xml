@@ -25,7 +25,7 @@
         </activity>
         <activity android:name=".NoteEditorActivity"></activity>
         <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyACETsWYLN4no4HlnCjv5rfRbPDdr0EjJk" />
-        <service android:name=".CheckConditionService" android:exported="false"></service>
+       <service android:name=".CheckConditionService" android:exported="false"></service>
     </application>
 
 </manifest>

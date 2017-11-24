@@ -61,9 +61,7 @@ class CheckConditionService extends Service{
 
                 getNowLatitude =(float) location.getLatitude();
                 getNowLongitude=(float)location.getLongitude();
-               // Log.i("Location",Double.toString(location.getLatitude()));
-               // Log.i("Location",Double.toString(location.getLongitude()));
-                Log.i("locationNow",Float.toString(getNowLatitude)+" "+Float.toString(getNowLongitude));
+                //Log.i("locationNow",Float.toString(getNowLatitude)+" "+Float.toString(getNowLongitude));
 
             }
 
@@ -79,9 +77,7 @@ class CheckConditionService extends Service{
 
             @Override
             public void onProviderDisabled(String provider) {
-                Intent i= new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(i);
+
             }
 
         };
@@ -107,8 +103,7 @@ class CheckConditionService extends Service{
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String formattedDate = df.format(cal.getTime());
 
-        // formattedDate have current date/time
-        //Log.i("formattedDate",formattedDate);
+
         String[] dateNow = formattedDate.split(" ");
         String timeNow =  dateNow[1].substring(0,5);
 
@@ -139,49 +134,53 @@ class CheckConditionService extends Service{
 
                 //Check time Condition match
                 //Log.i("DateNow",dateNow[0] + " "+ c.getString(dateIndex));
+                String getReminderTypeDb =c.getString(reminderTypeIndex);
                 if(c.getInt(isTriggerIndex) == 0) {
-                    if (dateNow[0].equals(c.getString(dateIndex))) {
+                    if(getReminderTypeDb.equals("Time") || getReminderTypeDb.equals("Time and Place")) {
+                        if (dateNow[0].equals(c.getString(dateIndex))) {
 
-                        if (timeNow.equals(c.getString(timeIndex))) {
+
+                            if (timeNow.equals(c.getString(timeIndex))) {
+                                Log.i("alarmtimeout", "alarm ring");
+                                selectedId = c.getInt(idIndex) - 1;
+                                selectedTitle = c.getString(titleIndex);
+                                showAlert();
+                                //Log.i("alarmtimeout",Integer.toString(c.getInt(idIndex)));
+                                noteDB.execSQL("UPDATE reminders SET isTrigger= '1' WHERE id = " + Integer.toString(c.getInt(idIndex)) + "");
+
+                                //Log.i("alarmtimeout",Integer.toString(c.getInt(idIndex)) + c.getString(titleIndex) + c.getString(noteIndex) +  c.getString(reminderTypeIndex) + c.getString(dateIndex) +  c.getString(timeIndex) +  c.getString(repeatByIndex) +c.getString(locationIndex)  +c.getString(latitudeIndex)+c.getString(longitudeIndex)+Integer.toString(c.getInt(isTriggerIndex)));
+                            }
+
+                        }
+                    }
+                    if(getReminderTypeDb.equals("Place") || getReminderTypeDb.equals("Time and Place"))
+                    {
+                        float lat1 = c.getFloat(latitudeIndex);
+                        float lon1 = c.getFloat(longitudeIndex);
+                        float lat2 = getNowLatitude;
+                        float lon2 = getNowLongitude;
+                        Log.i("locationcoor", "db :" + Float.toString(c.getFloat(latitudeIndex)) + " " + Float.toString(c.getFloat(longitudeIndex)) + " now : " + Float.toString(getNowLatitude) + " " + Float.toString(getNowLongitude));
+                        Location loc1 = new Location("");
+                        loc1.setLatitude(lat1);
+                        loc1.setLongitude(lon1);
+
+                        Location loc2 = new Location("");
+                        loc2.setLatitude(lat2);
+                        loc2.setLongitude(lon2);
+
+                        float distanceInMeters = loc1.distanceTo(loc2);
+                        Log.i("location", Float.toString(distanceInMeters));
+                        //if less than 300 miters trigger alarm
+                        if (distanceInMeters <= 300) {
                             Log.i("alarmtimeout", "alarm ring");
-                            selectedId = c.getInt(idIndex)-1;
+                            selectedId = c.getInt(idIndex) - 1;
                             selectedTitle = c.getString(titleIndex);
                             showAlert();
                             //Log.i("alarmtimeout",Integer.toString(c.getInt(idIndex)));
-                            noteDB.execSQL("UPDATE reminders SET isTrigger= '1' WHERE id = "+Integer.toString(c.getInt(idIndex))+"");
+                            noteDB.execSQL("UPDATE reminders SET isTrigger= '1' WHERE id = " + Integer.toString(c.getInt(idIndex)) + "");
 
-                            //Log.i("alarmtimeout",Integer.toString(c.getInt(idIndex)) + c.getString(titleIndex) + c.getString(noteIndex) +  c.getString(reminderTypeIndex) + c.getString(dateIndex) +  c.getString(timeIndex) +  c.getString(repeatByIndex) +c.getString(locationIndex)  +c.getString(latitudeIndex)+c.getString(longitudeIndex)+Integer.toString(c.getInt(isTriggerIndex)));
                         }
-
                     }
-
-
-                    float lat1 = c.getFloat(latitudeIndex);
-                    float lon1 = c.getFloat(longitudeIndex);
-                    float lat2 = getNowLatitude;
-                    float lon2 = getNowLongitude;
-                    Log.i("locationcoor","db :"+Float.toString(c.getFloat(latitudeIndex))+" "+Float.toString(c.getFloat(longitudeIndex))+" now : "+Float.toString(getNowLatitude)+ " "+Float.toString(getNowLongitude));
-                    Location loc1 = new Location("");
-                    loc1.setLatitude(lat1);
-                    loc1.setLongitude(lon1);
-
-                    Location loc2 = new Location("");
-                    loc2.setLatitude(lat2);
-                    loc2.setLongitude(lon2);
-
-                    float distanceInMeters = loc1.distanceTo(loc2);
-                    Log.i("location",Float.toString(distanceInMeters));
-                    //if less than 30 miters
-                    if(distanceInMeters <= 300){
-                        Log.i("alarmtimeout", "alarm ring");
-                        selectedId = c.getInt(idIndex)-1;
-                        selectedTitle = c.getString(titleIndex);
-                        showAlert();
-                        //Log.i("alarmtimeout",Integer.toString(c.getInt(idIndex)));
-                        noteDB.execSQL("UPDATE reminders SET isTrigger= '1' WHERE id = "+Integer.toString(c.getInt(idIndex))+"");
-
-                    }
-
                 }
 
 
@@ -202,7 +201,7 @@ class CheckConditionService extends Service{
             public void run() {
               checkCondition();
 
-            Log.i("5sec","pass");
+            //Log.i("5sec","pass");
 
             }
         }, 0, 10*1000);
@@ -215,7 +214,7 @@ class CheckConditionService extends Service{
         return START_STICKY;
     }
 
-
+    //vibration, wake screen while sleep, play sound
     public void showAlert(){
         Intent showReminderIntent = new Intent(getApplicationContext(), NoteEditorActivity.class);
         Intent snoozeReminderIntent = new Intent(getApplicationContext(), CheckConditionService.class);

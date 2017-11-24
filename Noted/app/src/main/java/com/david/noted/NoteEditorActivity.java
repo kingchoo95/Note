@@ -12,6 +12,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.icu.util.Calendar;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatEditText;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -32,9 +33,6 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 
-
-
-
 public class NoteEditorActivity extends AppCompatActivity {
 
     //variable for dialog reminder
@@ -45,7 +43,7 @@ public class NoteEditorActivity extends AppCompatActivity {
     String dialogRepeatBy = "";
     String dialogLocation = "";
     String locationString = "";
-    String getReminderDate= "";
+    String getReminderDate = "";
     String getReminderTime = "";
     Float getPlaceLatitude = (float)200;
     Float getPlaceLongitude = (float)200;
@@ -54,7 +52,7 @@ public class NoteEditorActivity extends AppCompatActivity {
     int getIsTrigger;
 
 
-    String getDialogReminderTypeString = null;
+
     //make string array for spinner
     String repeats[]={"Does not repeat","Daily","Weekly","Monthly","Yearly"};
     //date and time picker for dialog
@@ -114,7 +112,6 @@ public class NoteEditorActivity extends AppCompatActivity {
 
             editTextTitle.setText(c.getString(titleIndex));
             editTextNotes.setText(c.getString(noteIndex));
-            //dialogLocation = locationString;
             dialogReminderType = c.getString(reminderTypeIndex);
             dialogDate = c.getString(dateIndex);
             dialogTime = c.getString(timeIndex);
@@ -123,9 +120,8 @@ public class NoteEditorActivity extends AppCompatActivity {
             getIsTrigger =  c.getInt(isTriggerIndex);
             placeLatitude = c.getFloat(latitudeIndex);
             placeLongitude = c.getFloat(longitudeIndex) ;
-           // Log.i("Resultdbcontidion",Float.toString(getPlaceLatitude) +" " + Float.toString(getPlaceLongitude));
-        }else{
 
+        }else{
 
             //noteId = MainActivity.titles.size() - 1;
             MainActivity.arrayAdapter.notifyDataSetChanged();
@@ -146,216 +142,255 @@ public class NoteEditorActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         super.onOptionsItemSelected(item);
-
         if(item.getItemId() == R.id.addReminderId ){
 
-
-            final Spinner repeatSp = (Spinner)dialog.findViewById(R.id.spinnerRepeatId);
-            //final Spinner dateSp = (Spinner)dialog.findViewById(R.id.spinnerDateId);
-            //final Spinner timeSp = (Spinner)dialog.findViewById(R.id.spinnerTimeId);
-            final RadioGroup radioGroupReminderType = (RadioGroup) dialog.findViewById(R.id.radioReminderType);
-            RadioButton radioButtonTime = (RadioButton) dialog.findViewById(R.id.radioTimeId);
-            RadioButton radioButtonPlace = (RadioButton) dialog.findViewById(R.id.radioPlaceId);
-            RadioButton radioButtonTimeAndPlace = (RadioButton) dialog.findViewById(R.id.radioTimeAndPlaceId);
-            //set adapter to spinner
-            repeatSp.setAdapter(repeatAdapter);
-
-            PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
-                    getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
-            if(dialogLocation==""){
-                autocompleteFragment.setHint("Add a location");
-            }else{
-                autocompleteFragment.setText(dialogLocation);
+        final Spinner repeatSp = (Spinner)dialog.findViewById(R.id.spinnerRepeatId);
+        //find textView id for dialog
+        TextView saveTextBtn = (TextView) dialog.findViewById(R.id.textViewSaveId);
+        TextView removeTextBtn = (TextView) dialog.findViewById(R.id.textViewRemoveId);
+        TextView cancelTextBtn = (TextView) dialog.findViewById(R.id.textViewCancelId);
+        final TextView textViewDateId = (TextView) dialog.findViewById(R.id.textViewDateId);
+        final TextView textViewTimeId = (TextView) dialog.findViewById(R.id.textViewTimeId);
+        //find id for radio button
+        final RadioGroup radioGroupReminderType = (RadioGroup) dialog.findViewById(R.id.radioReminderType);
+        RadioButton placeRadioButton = (RadioButton) dialog.findViewById(R.id.radioPlaceId);
+        RadioButton timeRadioButton = (RadioButton) dialog.findViewById(R.id.radioTimeId);
+        RadioButton timenplaceRadioButton = (RadioButton) dialog.findViewById(R.id.radioTimeAndPlaceId);
+        //set adapter to spinner
+        repeatSp.setAdapter(repeatAdapter);
+            if(dialogReminderType.equals("Place")) {
+                placeRadioButton.setChecked(true);
+            }
+            if(dialogReminderType.equals("Time")){
+                timeRadioButton.setChecked(true);
+            }
+            if(dialogReminderType.equals("Time and Place")){
+                timenplaceRadioButton.setChecked(true);
             }
 
+        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
+                getFragmentManager().findFragmentById(R.id.locationReminderSectionId);
+
+        if(dialogLocation==""){
+            autocompleteFragment.setHint("Add a location");
+        }else{
+            autocompleteFragment.setText(dialogLocation);
+        }
 
 
-            //auto complete
-            autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-                @Override
-                public void onPlaceSelected(Place place) {
-                    // TODO: Get info about the selected place.
-                    locationString = place.getName().toString();
+        //auto complete
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                // TODO: Get info about the selected place.
+                locationString = place.getName().toString();
+                getPlaceLatitude = (float) place.getLatLng().latitude;
+                getPlaceLongitude = (float) place.getLatLng().longitude;
 
-                    getPlaceLatitude = (float) place.getLatLng().latitude;
-                    getPlaceLongitude = (float) place.getLatLng().longitude;
-                    //Log.i("theplace",place.getLatLng().toString());
-                    //Log.i("theplace",getPlaceLatitude.toString());
-                    //Log.i("theplace",getPlaceLongitude.toString());
-                }
+            }
 
-                @Override
-                public void onError(Status status) {
-                    // TODO: Handle the error.
-                    Log.i("tag", "An error occurred: " + status);
-                }
-            });
-            //get and assign spinner value
+            @Override
+            public void onError(Status status) {
+                // TODO: Handle the error.
+                Log.i("tag", "An error occurred: " + status);
+            }
+        });
 
-            //radioButtonPlace.setChecked(true);
+        //Log.i("slap",dialogDate.getClass().getName()+" " +dialogDate.getClass().getName() );
 
-            //find textView id for dialog
-            TextView saveTextBtn = (TextView) dialog.findViewById(R.id.textViewSaveId);
-            TextView removeTextBtn = (TextView) dialog.findViewById(R.id.textViewRemoveId);
-            TextView cancelTextBtn = (TextView) dialog.findViewById(R.id.textViewCancelId);
-            final TextView textViewDateId = (TextView) dialog.findViewById(R.id.textViewDateId);
-            final TextView textViewTimeId = (TextView) dialog.findViewById(R.id.textViewTimeId);
+        if((!dialogDate.equals("") && !dialogTime.equals(""))){
 
-            //Log.i("slap",dialogDate.getClass().getName()+" " +dialogDate.getClass().getName() );
-
-                if((!dialogDate.equals("") && !dialogTime.equals(""))){
-
-                    textViewDateId.setText(dialogDate);
-                    textViewTimeId.setText(dialogTime);
-
-                }else{
-                    textViewDateId.setText("Add Date");
-                    textViewTimeId.setText("Add Time");
-
-                }
-
-
-            textViewDateId.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Calendar cal = Calendar.getInstance();
-                    int year = cal.get(Calendar.YEAR);
-                    int month = cal.get(Calendar.MONTH);
-                    int day = cal.get(Calendar.DAY_OF_MONTH);
-
-                    DatePickerDialog dateDialog = new DatePickerDialog(NoteEditorActivity.this, android.R.style.Theme_Holo_Light_Dialog_NoActionBar, dDateSetListener,year, month,day);
-                    //to fix white background
-                    dateDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                    dateDialog.show();
-                }
-            });
-
-            dDateSetListener = new DatePickerDialog.OnDateSetListener() {
-                @Override
-                public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                    String newMonthFormat;
-                    String newDayOfMonthFormat;
-                    if(month+1 >=1 && month+1 <= 9){
-                        newMonthFormat = "0"+Integer.toString(month+1);
-                    }else {
-                        newMonthFormat = Integer.toString(month+1);
-                    }
-                    if(dayOfMonth >=1 && dayOfMonth <= 9){
-                        newDayOfMonthFormat = "0"+Integer.toString(dayOfMonth);
-                    }else {
-                        newDayOfMonthFormat = Integer.toString(dayOfMonth);
-                    }
-
-
-                    getReminderDate = Integer.toString(year)+"-"+newMonthFormat+"-"+newDayOfMonthFormat;
-                    textViewDateId.setText(getReminderDate);
-                }
-            };
-
-            textViewTimeId.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Calendar cal = Calendar.getInstance();
-                    int hour = cal.get(Calendar.HOUR_OF_DAY);
-                    int min = cal.get(Calendar.MINUTE);
-
-                    TimePickerDialog timeDialog = new TimePickerDialog(NoteEditorActivity.this, tTimeSetListener, hour, min, true);
-                    timeDialog.show();
-                }
-            });
-
-            tTimeSetListener = new TimePickerDialog.OnTimeSetListener(){
-                @Override
-                public void onTimeSet(android.widget.TimePicker view,
-                                      int hourOfDay, int minute) {
-                    String newMinuteFormat;
-                    String newHourFormat;
-                    if(hourOfDay>=0 &&hourOfDay<=9 ){
-                        newHourFormat ="0"+Integer.toString(hourOfDay);
-                    }else{
-                        newHourFormat =Integer.toString(hourOfDay);
-                    }
-
-                    if (minute>=0 &&minute<=9){
-                         newMinuteFormat = "0"+Integer.toString(minute);
-                    }else{
-                        newMinuteFormat= Integer.toString(minute);
-                    }
-                    getReminderTime = newHourFormat+":"+ newMinuteFormat;
-                    textViewTimeId.setText(getReminderTime);
-                }
-            };
-            removeTextBtn.setOnClickListener( new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    dialogLocation ="";
-                    dialogRepeatBy = "";
-                    dialogDate ="";
-                    dialogTime = "";
-                    getReminderDate="";
-                    getReminderTime="";
-                    locationString="";
-                    dialogReminderType ="";
-                    placeLatitude =(float)200;
-                    placeLongitude=(float)200;
-                    textViewDateId.setText("Add Date");
-                    textViewTimeId.setText("Add Time");
-
-                    dialog.dismiss();
-                }
-            });
-            cancelTextBtn.setOnClickListener( new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    dialog.dismiss();
-
-                }
-            });
-            saveTextBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    dialogLocation = locationString;
-                    //get and assign spinner value
-                    dialogRepeatBy = repeatSp.getSelectedItem().toString();
-
-
-                    getIsTrigger = 0;
-                    //get and assign radio button value
-                    int selectedId = radioGroupReminderType.getCheckedRadioButtonId();
-                    RadioButton radioButton = (RadioButton) dialog.findViewById(selectedId);
-                    dialogReminderType = radioButton.getText().toString();
-                    if(getPlaceLatitude == null||getPlaceLongitude==null){
-                        placeLatitude =(float)200;
-                        placeLongitude=(float)200;
-                    }else{
-                        placeLatitude =getPlaceLatitude;
-                        placeLongitude=getPlaceLongitude;
-                    }
-
-                    if((getReminderDate=="" || getReminderTime=="")){
-
-                        Toast.makeText(getApplicationContext(),"Please select time and date to save",Toast.LENGTH_SHORT).show();
-                    }else{
-                        dialogDate = getReminderDate;
-                        dialogTime = getReminderTime;
-                        dialog.dismiss();
-
-                    }
-                }
-            });
-            dialog.show();
-            return true;
-
+            textViewDateId.setText(dialogDate);
+            textViewTimeId.setText(dialogTime);
 
         }else{
 
-            return false;
+            textViewDateId.setText("Add Date");
+            textViewTimeId.setText("Add Time");
 
         }
 
+        textViewDateId.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Calendar cal = Calendar.getInstance();
+                int year = cal.get(Calendar.YEAR);
+                int month = cal.get(Calendar.MONTH);
+                int day = cal.get(Calendar.DAY_OF_MONTH);
+
+                DatePickerDialog dateDialog = new DatePickerDialog(NoteEditorActivity.this, android.R.style.Theme_Holo_Light_Dialog_NoActionBar, dDateSetListener,year, month,day);
+                //to fix white background
+                dateDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dateDialog.show();
+            }
+        });
+
+        dDateSetListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                String newMonthFormat;
+                String newDayOfMonthFormat;
+                if(month+1 >=1 && month+1 <= 9){
+                    newMonthFormat = "0"+Integer.toString(month+1);
+                }else {
+                    newMonthFormat = Integer.toString(month+1);
+                }
+                if(dayOfMonth >=1 && dayOfMonth <= 9){
+                    newDayOfMonthFormat = "0"+Integer.toString(dayOfMonth);
+                }else {
+                    newDayOfMonthFormat = Integer.toString(dayOfMonth);
+                }
+
+
+                getReminderDate = Integer.toString(year)+"-"+newMonthFormat+"-"+newDayOfMonthFormat;
+                textViewDateId.setText(getReminderDate);
+            }
+        };
+
+        textViewTimeId.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Calendar cal = Calendar.getInstance();
+                int hour = cal.get(Calendar.HOUR_OF_DAY);
+                int min = cal.get(Calendar.MINUTE);
+
+                TimePickerDialog timeDialog = new TimePickerDialog(NoteEditorActivity.this, tTimeSetListener, hour, min, true);
+                timeDialog.show();
+            }
+        });
+
+        tTimeSetListener = new TimePickerDialog.OnTimeSetListener(){
+            @Override
+            public void onTimeSet(android.widget.TimePicker view,
+                                  int hourOfDay, int minute) {
+                String newMinuteFormat;
+                String newHourFormat;
+                if(hourOfDay>=0 &&hourOfDay<=9 ){
+                    newHourFormat ="0"+Integer.toString(hourOfDay);
+                }else{
+                    newHourFormat =Integer.toString(hourOfDay);
+                }
+
+                if (minute>=0 &&minute<=9){
+                    newMinuteFormat = "0"+Integer.toString(minute);
+                }else{
+                    newMinuteFormat= Integer.toString(minute);
+                }
+                getReminderTime = newHourFormat+":"+ newMinuteFormat;
+                textViewTimeId.setText(getReminderTime);
+            }
+        };
+        removeTextBtn.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                dialogLocation ="";
+                dialogRepeatBy = "";
+                dialogDate ="";
+                dialogTime = "";
+                getReminderDate="";
+                getReminderTime="";
+                locationString="";
+                dialogReminderType ="";
+                placeLatitude =(float)200;
+                placeLongitude=(float)200;
+                textViewDateId.setText("Add Date");
+                textViewTimeId.setText("Add Time");
+
+                dialog.dismiss();
+            }
+        });
+        cancelTextBtn.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                dialog.dismiss();
+
+            }
+        });
+        saveTextBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                int selectedId = radioGroupReminderType.getCheckedRadioButtonId();
+                // find the radiobutton by returned id
+                RadioButton radioButtonSelected = (RadioButton) dialog.findViewById(selectedId);
+                String reminderType = radioButtonSelected.getText().toString();
+
+                //get and assign spinner value
+                dialogRepeatBy = repeatSp.getSelectedItem().toString();
+
+
+                getIsTrigger = 0;
+                //get and assign radio button value
+
+                dialogReminderType = reminderType;
+                if(getPlaceLatitude == null||getPlaceLongitude==null){
+                    placeLatitude =(float)200;
+                    placeLongitude=(float)200;
+                }else{
+                    placeLatitude =getPlaceLatitude;
+                    placeLongitude=getPlaceLongitude;
+                }
+                if(reminderType.equals("Time")) {
+                    checkDateAndTimeIsNull();
+                }
+                if(reminderType.equals("Place")){
+                    checkPlaceIsNull();
+                }
+                if(reminderType.equals("Time and Place")){
+                    checkPlaceNTimeIsNull();
+                }
+
+
+            }
+        });
+
+        dialog.show();
+        return true;
+
+
+    }else{
+
+        return false;
+
+    }
+
+}
+    public void checkDateAndTimeIsNull(){
+        if((getReminderDate=="" || getReminderTime=="")){
+
+            Toast.makeText(getApplicationContext(),"Please select time and date to save",Toast.LENGTH_SHORT).show();
+        }else{
+            dialogDate = getReminderDate;
+            dialogTime = getReminderTime;
+            dialog.dismiss();
+
+        }
+    }
+
+    public void checkPlaceIsNull(){
+        if((locationString=="")){
+
+            Toast.makeText(getApplicationContext(),"Please select a location",Toast.LENGTH_SHORT).show();
+        }else{
+            dialogLocation = locationString;
+
+            dialog.dismiss();
+
+        }
+    }
+    public void checkPlaceNTimeIsNull(){
+        if((locationString==""||getReminderDate=="" || getReminderTime=="")){
+
+            Toast.makeText(getApplicationContext(),"Please select time, date and location",Toast.LENGTH_SHORT).show();
+        }else{
+            dialogLocation = locationString;
+            dialogDate = getReminderDate;
+            dialogTime = getReminderTime;
+            dialog.dismiss();
+
+        }
     }
     // menu bar for add reminder end
     public void preventNullValue(){
