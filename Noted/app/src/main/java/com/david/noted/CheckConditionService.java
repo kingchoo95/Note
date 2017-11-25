@@ -1,6 +1,7 @@
 package com.david.noted;
 
 import android.Manifest;
+import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -19,6 +20,7 @@ import android.media.audiofx.BassBoost;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.PersistableBundle;
 import android.os.PowerManager;
 import android.os.Vibrator;
 import android.provider.Settings;
@@ -43,7 +45,7 @@ import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
  */
 
 
-class CheckConditionService extends Service{
+public class CheckConditionService extends Service{
     private  LocationManager locationManager;
     private  LocationListener locationListener;
     public float getNowLatitude;
@@ -61,7 +63,7 @@ class CheckConditionService extends Service{
 
                 getNowLatitude =(float) location.getLatitude();
                 getNowLongitude=(float)location.getLongitude();
-                //Log.i("locationNow",Float.toString(getNowLatitude)+" "+Float.toString(getNowLongitude));
+                Log.i("locationNow",Float.toString(getNowLatitude)+" "+Float.toString(getNowLongitude));
 
             }
 
@@ -84,7 +86,7 @@ class CheckConditionService extends Service{
          locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         //noinspection MissingPermission
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2 * 60 * 1000,500, locationListener);
-        //Ask for permission
+
 
     }
 
@@ -139,14 +141,44 @@ class CheckConditionService extends Service{
                     if(getReminderTypeDb.equals("Time") || getReminderTypeDb.equals("Time and Place")) {
                         if (dateNow[0].equals(c.getString(dateIndex))) {
 
+                            Calendar now = Calendar.getInstance();
+
+                            String repeatType = c.getString(repeatByIndex);
+                            String newRepeatTypeDate = c.getString(dateIndex) ;
+                            int isTrigger;
+                            if(repeatType.equals("Daily")){
+                                now.add(Calendar.DAY_OF_MONTH, 1);
+                                SimpleDateFormat newRepeatTypeTime = new SimpleDateFormat("yyyy-MM-dd");
+                                newRepeatTypeDate = newRepeatTypeTime.format(now.getTime()) ;
+                                isTrigger = 0;
+                            }else if(repeatType.equals("Weekly")){
+                                now.add(Calendar.DAY_OF_MONTH, 7);
+                                SimpleDateFormat newRepeatTypeTime = new SimpleDateFormat("yyyy-MM-dd");
+                                newRepeatTypeDate = newRepeatTypeTime.format(now.getTime());
+                                isTrigger = 0;
+                            }else if(repeatType.equals("Monthly")){
+                                now.add(Calendar.MONTH, 1);
+                                SimpleDateFormat newRepeatTypeTime = new SimpleDateFormat("yyyy-MM-dd");
+                                newRepeatTypeDate = newRepeatTypeTime.format(now.getTime()) ;
+                                isTrigger = 0;
+                            }else if(repeatType.equals("Yearly")){
+                                now.add(Calendar.YEAR, 1);
+                                SimpleDateFormat newRepeatTypeTime = new SimpleDateFormat("yyyy-MM-dd");
+                                newRepeatTypeDate = newRepeatTypeTime.format(now.getTime()) ;
+                                isTrigger = 0;
+                            }else{
+                                isTrigger = 1;
+                            }
+
+
 
                             if (timeNow.equals(c.getString(timeIndex))) {
-                                Log.i("alarmtimeout", "alarm ring");
+                                //Log.i("alarmtimeout", "alarm ring");
                                 selectedId = c.getInt(idIndex) - 1;
                                 selectedTitle = c.getString(titleIndex);
                                 showAlert();
                                 //Log.i("alarmtimeout",Integer.toString(c.getInt(idIndex)));
-                                noteDB.execSQL("UPDATE reminders SET isTrigger= '1' WHERE id = " + Integer.toString(c.getInt(idIndex)) + "");
+                                noteDB.execSQL("UPDATE reminders SET date= '"+ newRepeatTypeDate +"',isTrigger= '"+ isTrigger +"' WHERE id = " + Integer.toString(c.getInt(idIndex)) + "");
 
                                 //Log.i("alarmtimeout",Integer.toString(c.getInt(idIndex)) + c.getString(titleIndex) + c.getString(noteIndex) +  c.getString(reminderTypeIndex) + c.getString(dateIndex) +  c.getString(timeIndex) +  c.getString(repeatByIndex) +c.getString(locationIndex)  +c.getString(latitudeIndex)+c.getString(longitudeIndex)+Integer.toString(c.getInt(isTriggerIndex)));
                             }
@@ -217,14 +249,15 @@ class CheckConditionService extends Service{
     //vibration, wake screen while sleep, play sound
     public void showAlert(){
         Intent showReminderIntent = new Intent(getApplicationContext(), NoteEditorActivity.class);
-        Intent snoozeReminderIntent = new Intent(getApplicationContext(), CheckConditionService.class);
+        Intent snoozeReminderIntent = new Intent(getApplicationContext(), SnoozeReminderActivity.class);
+        snoozeReminderIntent.putExtra("noteId",selectedId);
         Intent viewLocationIntent = new Intent(getApplicationContext(), NoteEditorActivity.class);
         showReminderIntent.putExtra("noteId",selectedId);
         showReminderIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
         PendingIntent showIntent = PendingIntent.getActivity(getApplicationContext(),selectedId, showReminderIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        PendingIntent snoozeIntent = PendingIntent.getActivity(getApplicationContext(),0,snoozeReminderIntent, 0);
+        PendingIntent snoozeIntent = PendingIntent.getActivity(getApplicationContext(),selectedId,snoozeReminderIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         PendingIntent locationIntent = PendingIntent.getActivity(getApplicationContext(),0,viewLocationIntent, 0);
         Notification notification = new Notification.Builder(getApplicationContext())
                 .setContentTitle(selectedTitle)
@@ -256,9 +289,5 @@ class CheckConditionService extends Service{
 
     }
 
-    // for snooze button
-    public void snoozeReminder(){
-
-        noteDB.execSQL("UPDATE reminders SET time = '10:30' WHERE id = "+Integer.toString(selectedId)+"");
-    }
 }
+

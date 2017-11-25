@@ -60,7 +60,7 @@ public class NoteEditorActivity extends AppCompatActivity {
     private TimePickerDialog.OnTimeSetListener tTimeSetListener;
 
     int noteId;
-    Intent intent;
+
     SQLiteDatabase noteDB;
     //defines array adapter of string type
     ArrayAdapter repeatAdapter;
@@ -76,6 +76,7 @@ public class NoteEditorActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_editor);
         //services to check condition
+
         Intent intent = new Intent(this, CheckConditionService.class);
         startService(intent);
 
@@ -342,13 +343,11 @@ public class NoteEditorActivity extends AppCompatActivity {
                     checkPlaceNTimeIsNull();
                 }
 
-
             }
         });
 
         dialog.show();
         return true;
-
 
     }else{
 
@@ -441,6 +440,8 @@ public class NoteEditorActivity extends AppCompatActivity {
         }
         return super.onKeyDown(keyCode, event);
     }
+
+
 
 
 }
