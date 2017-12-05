@@ -35,7 +35,8 @@
             android:name=".CheckConditionService"
             android:exported="false" />
 
-        <activity android:name=".SnoozeReminderActivity"></activity>
+        <activity android:name=".SnoozeReminderActivity" />
+        <activity android:name=".SearchReminderActivity"></activity>
     </application>
 
 </manifest>

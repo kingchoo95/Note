@@ -12,7 +12,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.icu.util.Calendar;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.AppCompatEditText;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -157,6 +156,7 @@ public class NoteEditorActivity extends AppCompatActivity {
         RadioButton placeRadioButton = (RadioButton) dialog.findViewById(R.id.radioPlaceId);
         RadioButton timeRadioButton = (RadioButton) dialog.findViewById(R.id.radioTimeId);
         RadioButton timenplaceRadioButton = (RadioButton) dialog.findViewById(R.id.radioTimeAndPlaceId);
+
         //set adapter to spinner
         repeatSp.setAdapter(repeatAdapter);
             if(dialogReminderType.equals("Place")) {
@@ -357,6 +357,8 @@ public class NoteEditorActivity extends AppCompatActivity {
 
 }
     public void checkDateAndTimeIsNull(){
+
+
         if((getReminderDate=="" || getReminderTime=="")){
 
             Toast.makeText(getApplicationContext(),"Please select time and date to save",Toast.LENGTH_SHORT).show();
@@ -369,6 +371,10 @@ public class NoteEditorActivity extends AppCompatActivity {
     }
 
     public void checkPlaceIsNull(){
+        if(dialogRepeatBy !="Does not repeat"){
+            Toast.makeText(getApplicationContext(),"Reminder will not repeat for place reminder!",Toast.LENGTH_SHORT).show();
+        }
+
         if((locationString=="")){
 
             Toast.makeText(getApplicationContext(),"Please select a location",Toast.LENGTH_SHORT).show();
@@ -380,6 +386,10 @@ public class NoteEditorActivity extends AppCompatActivity {
         }
     }
     public void checkPlaceNTimeIsNull(){
+        if(dialogRepeatBy !="Does not repeat"){
+            Toast.makeText(getApplicationContext(),"Reminder will not repeat for place reminder!",Toast.LENGTH_SHORT).show();
+        }
+
         if((locationString==""||getReminderDate=="" || getReminderTime=="")){
 
             Toast.makeText(getApplicationContext(),"Please select time, date and location",Toast.LENGTH_SHORT).show();

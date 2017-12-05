@@ -30,9 +30,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Timer;
-import java.util.TimerTask;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -79,6 +77,14 @@ public class MainActivity extends AppCompatActivity {
             //aSK FOR PERMISSION
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
         }
+
+       /*
+        //get user location permission
+        if(Build.VERSION.SDK_INT >= 23 && ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},100);
+        }
+        */
+        Intent intent = new Intent(this, CheckConditionService.class);
         try{
 
             SQLiteDatabase noteDB = this.openOrCreateDatabase("Reminders", MODE_PRIVATE, null);
@@ -110,15 +116,7 @@ public class MainActivity extends AppCompatActivity {
 
         }catch(Exception e){
             e.printStackTrace();
-    }
-
-       /*
-        //get user location permission
-        if(Build.VERSION.SDK_INT >= 23 && ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},100);
         }
-        */
-        Intent intent = new Intent(this, CheckConditionService.class);
         startService(intent);
 
 
@@ -142,11 +140,10 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(),NoteEditorActivity.class);
                 //tell which row the user tap
                 intent.putExtra("noteId",position);
-                //Log.i("noteiD" , Integer.toString(position));
-
                 startActivity(intent);
             }
         });
+
 
         //long click to delete note
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener(){
@@ -169,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
                                 noteDB.execSQL("DELETE FROM reminders WHERE id = " + Integer.toString(itemToDelete+1)+ "");
 
                                 int numRows = (int)DatabaseUtils.queryNumEntries(noteDB, "reminders");
-                                Log.i("o0o", Integer.toString(numRows));
+
                                 selectId = itemToDelete+1 ;
                                 while(selectId <= numRows){
 
@@ -197,9 +194,15 @@ public class MainActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
+        Log.i("search",Integer.toString(item.getItemId()));
+        if(item.getItemId() == R.id.searchReminderId){
+            Intent searchReminderItent = new Intent(this, SearchReminderActivity.class);
+            this.startActivity(searchReminderItent);
+        }
 
         switch (item.getItemId()){
 
