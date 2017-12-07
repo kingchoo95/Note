@@ -66,6 +66,7 @@ public class SearchReminderActivity extends AppCompatActivity {
     }
 
 
+    // check which position if have same titles note
     public void checkAfterFilterPosition(String clickFilterString, int position){
 
             int arraySize = titles.size();
