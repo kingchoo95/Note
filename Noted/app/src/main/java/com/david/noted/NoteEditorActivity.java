@@ -425,7 +425,6 @@ public class NoteEditorActivity extends AppCompatActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event)  {
         //prevent null value if user did not click add reminder button
         preventNullValue();
-//        noteId = intent.getIntExtra("noteId",noteId);
         if (Integer.parseInt(android.os.Build.VERSION.SDK) > 5
                 && keyCode == KeyEvent.KEYCODE_BACK
                 && event.getRepeatCount() == 0) {
@@ -443,11 +442,19 @@ public class NoteEditorActivity extends AppCompatActivity {
             }else{
                 //Log.i("noteId","other");
                 noteDB.execSQL("UPDATE reminders SET title= '"+ editTextTitle.getText().toString() +"',note = '"+ editTextNotes.getText().toString() +"',reminderType = '" + dialogReminderType + "',date = '" + dialogDate + "',time = '"+ dialogTime +"', repeatBy = '" + dialogRepeatBy + "', location = '"+ dialogLocation +"',latitude = '"+ placeLatitude+"', longitude = '"+placeLongitude+"',isTrigger = '"+getIsTrigger +"'  WHERE id = "+ Integer.toString(noteId+1)+"");
+                if(SearchReminderActivity.arrayAdapter != null) {
+
+                    SearchReminderActivity.titlesFilter.set(noteId, editTextTitle.getText().toString());
+                    SearchReminderActivity.arrayAdapter.notifyDataSetChanged();
+                }
+
                 MainActivity.titles.set(noteId,editTextTitle.getText().toString());
                 MainActivity.arrayAdapter.notifyDataSetChanged();
+
             }
 
         }
+
         return super.onKeyDown(keyCode, event);
     }
 

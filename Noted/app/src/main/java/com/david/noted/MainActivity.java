@@ -34,9 +34,8 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    //private TextView mTextMessage;
+
     static ArrayList<String> titles = new ArrayList<>();
-    //static ArrayList<String> notes = new ArrayList<>();
     static ArrayAdapter arrayAdapter;
     public int selectId=0;
 
@@ -140,10 +139,11 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(),NoteEditorActivity.class);
                 //tell which row the user tap
                 intent.putExtra("noteId",position);
+                //Log.i("noteiD" , Integer.toString(position));
+
                 startActivity(intent);
             }
         });
-
 
         //long click to delete note
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener(){
