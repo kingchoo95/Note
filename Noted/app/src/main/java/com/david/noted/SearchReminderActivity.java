@@ -12,13 +12,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import java.util.ArrayList;
 
 
 
 public class SearchReminderActivity extends AppCompatActivity {
+
     int countFilterPosition=0;
     SearchView searchView;
     ArrayList<String> titles = MainActivity.titles;
@@ -34,7 +34,6 @@ public class SearchReminderActivity extends AppCompatActivity {
 
 
         listView = (ListView) findViewById(R.id.notesListViewId);
-
         arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1,titlesFilter);
 
         if(titlesFilter != null){
@@ -52,42 +51,57 @@ public class SearchReminderActivity extends AppCompatActivity {
                 countFilterPosition = position;
                 if(isFilter){
 
-                   checkAfterFilterPosition(clickFilterString,position);
+                    countFilterPosition = checkAfterFilterPosition(clickFilterString,position);
 
                 }
+
 
                 intent.putExtra("noteId", countFilterPosition);
                 startActivity(intent);
                 searchView.setQuery("", false);
                 searchView.clearFocus();
+                isFilter = false;
 
             }
         });
+
+
+    }
+
+    public void enterSearchLocationActivity(View view){
+        Intent intent = new Intent(this,SearchPlaceActivity.class);
+
+        startActivity(intent);
     }
 
 
     // check which position if have same titles note
-    public void checkAfterFilterPosition(String clickFilterString, int position){
+    public int checkAfterFilterPosition(String clickFilterString, int position){
 
-            int arraySize = titles.size();
+        int arraySize = titles.size();
 
-            for(int i = 0 ; i < arraySize ; i++){
+        for(int i = 0 ; i < arraySize ; i++){
 
-                if ((clickFilterString.equals(titles.get(i)))) {
-                    if(position==0) {
+            if ((clickFilterString.equals(titles.get(i)))&& position==0) {
 
-                        countFilterPosition=i;
-                        Log.i("lastposition",Integer.toString(countFilterPosition));
-                        break;
+                countFilterPosition=i;
+                Log.i("countFilterPosition1",Integer.toString(countFilterPosition));
+                break;
 
-                    }else{
-                        position = position-1;
-                    }
-                }
+            }else if((clickFilterString.equals(titles.get(i)))&& position!=0){
+
+                countFilterPosition=i;
+                Log.i("countFilterPosition2",Integer.toString(countFilterPosition));
+                position = position-1;
+
             }
 
+        }
+        return countFilterPosition;
 
     }
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater =  getMenuInflater();
@@ -105,7 +119,11 @@ public class SearchReminderActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextChange(String newText) {
                 arrayAdapter.getFilter().filter(newText);
-                isFilter = true;
+
+
+                if(newText!=""){
+                    isFilter = true;
+                }
                 return false;
             }
         });

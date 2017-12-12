@@ -458,7 +458,4 @@ public class NoteEditorActivity extends AppCompatActivity {
         return super.onKeyDown(keyCode, event);
     }
 
-
-
-
 }

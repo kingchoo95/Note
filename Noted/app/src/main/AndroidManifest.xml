@@ -36,7 +36,8 @@
             android:exported="false" />
 
         <activity android:name=".SnoozeReminderActivity" />
-        <activity android:name=".SearchReminderActivity"></activity>
+        <activity android:name=".SearchReminderActivity" />
+        <activity android:name=".SearchPlaceActivity" />
     </application>
 
 </manifest>

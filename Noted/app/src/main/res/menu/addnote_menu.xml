@@ -4,4 +4,5 @@
         android:id="@+id/addNewNoteId"
         android:icon="@drawable/ic_add_circle_black_24dp"
         android:title="Add Note"/>
+
 </menu>
