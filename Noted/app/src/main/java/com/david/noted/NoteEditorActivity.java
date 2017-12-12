@@ -447,6 +447,12 @@ public class NoteEditorActivity extends AppCompatActivity {
                     SearchReminderActivity.titlesFilter.set(noteId, editTextTitle.getText().toString());
                     SearchReminderActivity.arrayAdapter.notifyDataSetChanged();
                 }
+                if(SearchPlaceActivity.customAdapter != null) {
+
+                    SearchPlaceActivity.titles.set(noteId, editTextTitle.getText().toString());
+                    SearchPlaceActivity.locations.set(noteId, dialogLocation.toString());
+                    SearchPlaceActivity.customAdapter.notifyDataSetChanged();
+                }
 
                 MainActivity.titles.set(noteId,editTextTitle.getText().toString());
                 MainActivity.arrayAdapter.notifyDataSetChanged();

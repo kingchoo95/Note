@@ -13,9 +13,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -23,13 +26,13 @@ public class SearchPlaceActivity extends AppCompatActivity {
     SearchView searchView;
     static ArrayList<String> titles = new ArrayList<>();
     static ArrayList<String> locations = new ArrayList<>();
-    static ArrayAdapter arrayAdapter;
-
+    static CustomAdapter customAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_place);
-
+        titles.clear();
+        locations.clear();
         try{
 
             SQLiteDatabase noteDB = this.openOrCreateDatabase("Reminders", MODE_PRIVATE, null);
@@ -45,7 +48,7 @@ public class SearchPlaceActivity extends AppCompatActivity {
             while(c != null){
                 //Log.i("Resultnow",Integer.toString(c.getInt(idIndex)) + c.getString(titleIndex) + c.getString(noteIndex) +  c.getString(reminderTypeIndex) + c.getString(dateIndex) +  c.getString(timeIndex) +  c.getString(repeatByIndex) +c.getString(locationIndex) +c.getString(latitudeIndex)+c.getString(longitudeIndex)+Integer.toString(c.getInt(isTriggerIndex)));
                 titles.add(c.getString(titleIndex));
-                locations.add(c.getString(titleIndex));
+                locations.add(c.getString(locationIndex));
                 c.moveToNext();
             }
 
@@ -55,12 +58,13 @@ public class SearchPlaceActivity extends AppCompatActivity {
 
         ListView listView = (ListView) findViewById(R.id.placeListViewId);
 
-        arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1,titles);
+        customAdapter = new CustomAdapter();
         if(titles != null){
-            listView.setAdapter(arrayAdapter);
+
+            listView.setAdapter(customAdapter);
         }
 
-/*
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -73,7 +77,7 @@ public class SearchPlaceActivity extends AppCompatActivity {
             }
         });
 
-*/
+
 
         //bottom navigation
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
@@ -121,5 +125,36 @@ public class SearchPlaceActivity extends AppCompatActivity {
         });
 
         return super.onCreateOptionsMenu(menu);
+    }
+
+    //create custom listview
+    class CustomAdapter extends BaseAdapter{
+
+        @Override
+        public int getCount() {
+            return locations.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+
+            convertView = getLayoutInflater().inflate(R.layout.search_place_custom_layout,null);
+            TextView textViewPlaceName = (TextView) convertView.findViewById(R.id.textViewPlaceId);
+            TextView textViewTitleName = (TextView) convertView.findViewById(R.id.textViewTitleNameId);
+
+            textViewPlaceName.setText(locations.get(position));
+            textViewTitleName.setText(titles.get(position));
+            return convertView;
+        }
     }
 }
