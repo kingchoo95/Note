@@ -9,76 +9,39 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.Filterable;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Filter;
 
 import java.util.ArrayList;
 
+
+
 public class SearchPlaceActivity extends AppCompatActivity {
     SearchView searchView;
-    static ArrayList<String> titles = new ArrayList<>();
-    static ArrayList<String> locations = new ArrayList<>();
+    static ArrayList<String> titlesASC = new ArrayList<>();
+    static ArrayList<String> locationsASC = new ArrayList<>();
+
+    ArrayList<String> titles = MainActivity.titles;
+    ArrayList<String> locations = MainActivity.locations;
+
     static CustomAdapter customAdapter;
+    ListView listView;
+    View convertView;
+    Boolean ASC = true;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_place);
-        titles.clear();
-        locations.clear();
-        try{
 
-            SQLiteDatabase noteDB = this.openOrCreateDatabase("Reminders", MODE_PRIVATE, null);
-            Cursor c = noteDB.rawQuery("SELECT * FROM reminders",null);
-
-            int idIndex = c.getColumnIndex("id");
-            int titleIndex = c.getColumnIndex("title");
-            int repeatByIndex = c.getColumnIndex("repeatBy");
-            int locationIndex = c.getColumnIndex("location");
-
-            c.moveToFirst();
-
-            while(c != null){
-                //Log.i("Resultnow",Integer.toString(c.getInt(idIndex)) + c.getString(titleIndex) + c.getString(noteIndex) +  c.getString(reminderTypeIndex) + c.getString(dateIndex) +  c.getString(timeIndex) +  c.getString(repeatByIndex) +c.getString(locationIndex) +c.getString(latitudeIndex)+c.getString(longitudeIndex)+Integer.toString(c.getInt(isTriggerIndex)));
-                titles.add(c.getString(titleIndex));
-                locations.add(c.getString(locationIndex));
-                c.moveToNext();
-            }
-
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-
-        ListView listView = (ListView) findViewById(R.id.placeListViewId);
-
-        customAdapter = new CustomAdapter();
-        if(titles != null){
-
-            listView.setAdapter(customAdapter);
-        }
-
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getApplicationContext(),NoteEditorActivity.class);
-                //tell which row the user tap
-                intent.putExtra("noteId",position);
-                //Log.i("noteiD" , Integer.toString(position));
-
-                startActivity(intent);
-            }
-        });
-
-
-
+        runDatabase();
         //bottom navigation
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -88,9 +51,16 @@ public class SearchPlaceActivity extends AppCompatActivity {
                 switch (item.getItemId()){
                     case R.id.action_decending:
                         Log.i("sta up there","a to z");
+                        ASC = false;
+                        runDatabase();
+
+
                         break;
                     case R.id.action_acending:
                         Log.i("sta up there","z to a");
+                        ASC = true;
+                        runDatabase();
+
                         break;
                 }
                 return true;
@@ -99,40 +69,96 @@ public class SearchPlaceActivity extends AppCompatActivity {
 
     }
 
-    //search menu
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater =  getMenuInflater();
-        inflater.inflate(R.menu.advance_search_menu,menu);
+    public void runDatabase(){
+
+        titlesASC.clear();
+        locationsASC.clear();
+
+        String newQuery;
+
+        if(ASC == true){
+            newQuery ="SELECT * FROM reminders ORDER BY location ASC";
+        }else{
+            newQuery ="SELECT * FROM reminders ORDER BY location DESC";
+        }
+
+        try{
+
+            SQLiteDatabase noteDB = this.openOrCreateDatabase("Reminders", MODE_PRIVATE, null);
+            Cursor c = noteDB.rawQuery(newQuery,null);
 
 
-        MenuItem item = menu.findItem(R.id.app_bar_search);
-        searchView = (SearchView) item.getActionView();
+            int titleIndex = c.getColumnIndex("title");
+            int locationIndex = c.getColumnIndex("location");
 
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener(){
+            c.moveToFirst();
 
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
+            while(c != null){
+
+                if(!c.getString(locationIndex).equals("")) {
+                    titlesASC.add(c.getString(titleIndex));
+                    locationsASC.add(c.getString(locationIndex));
+                }
+
+                c.moveToNext();
             }
 
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                //arrayAdapter.getFilter().filter(newText);
 
-                return false;
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        listView = (ListView) findViewById(R.id.placeListViewId);
+
+        customAdapter = new CustomAdapter();
+        if(titlesASC != null){
+
+            listView.setAdapter(customAdapter);
+        }
+
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getApplicationContext(),NoteEditorActivity.class);
+                //String clickedLocationString = listView.getItemAtPosition(position).toString();
+                convertView = getLayoutInflater().inflate(R.layout.search_place_custom_layout,null);
+                TextView clickedTitle = (TextView) customAdapter.getView(position,view,parent).findViewById(R.id.textViewTitleNameId);
+                TextView clickedLocation = (TextView) customAdapter.getView(position,view,parent).findViewById(R.id.textViewPlaceId);
+                //Log.i("adasdasdasd",clickedTitle.getText().toString());
+                Log.i("awdwa1",Integer.toString(position));
+                position = getLocationPosition(clickedTitle.getText().toString(), clickedLocation.getText().toString() );
+
+                intent.putExtra("noteId",position);
+                startActivity(intent);
             }
         });
-
-        return super.onCreateOptionsMenu(menu);
     }
+    //get location id in database
+    public int getLocationPosition(String title,String location){
+        int position = 0;
 
+
+        for(int i = 0 ; i < locations.size() ; i++ ){
+
+            if(locations.get(i).equals(location)){
+                if(titles.get(i).equals(title)){
+                    position = i;
+                    break;
+                }
+            }
+
+        }
+
+        return position;
+    }
     //create custom listview
-    class CustomAdapter extends BaseAdapter{
+    class CustomAdapter extends BaseAdapter implements Filterable{
 
         @Override
         public int getCount() {
-            return locations.size();
+            return locationsASC.size();
         }
 
         @Override
@@ -152,9 +178,24 @@ public class SearchPlaceActivity extends AppCompatActivity {
             TextView textViewPlaceName = (TextView) convertView.findViewById(R.id.textViewPlaceId);
             TextView textViewTitleName = (TextView) convertView.findViewById(R.id.textViewTitleNameId);
 
-            textViewPlaceName.setText(locations.get(position));
-            textViewTitleName.setText(titles.get(position));
+            textViewPlaceName.setText(locationsASC.get(position));
+            textViewTitleName.setText(titlesASC.get(position));
             return convertView;
         }
+
+        @Override
+        public Filter getFilter() {
+
+            return null;
+        }
+
+
     }
+    @Override
+    public void onResume(){
+
+        runDatabase();
+        super.onResume();
+    }
+
 }

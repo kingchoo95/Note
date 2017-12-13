@@ -36,8 +36,9 @@ public class MainActivity extends AppCompatActivity {
 
 
     static ArrayList<String> titles = new ArrayList<>();
+    static ArrayList<String> locations = new ArrayList<>();
     static ArrayAdapter arrayAdapter;
-    public int selectId=0;
+    public int selectId = 0;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -110,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
             while(c != null){
                 Log.i("Resultnow",Integer.toString(c.getInt(idIndex)) + c.getString(titleIndex) + c.getString(noteIndex) +  c.getString(reminderTypeIndex) + c.getString(dateIndex) +  c.getString(timeIndex) +  c.getString(repeatByIndex) +c.getString(locationIndex) +c.getString(latitudeIndex)+c.getString(longitudeIndex)+Integer.toString(c.getInt(isTriggerIndex)));
                 titles.add(c.getString(titleIndex));
+                locations.add(c.getString(locationIndex));
                 c.moveToNext();
             }
 

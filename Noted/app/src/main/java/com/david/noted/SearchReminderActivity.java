@@ -21,7 +21,7 @@ public class SearchReminderActivity extends AppCompatActivity {
 
     int countFilterPosition=0;
     SearchView searchView;
-    ArrayList<String> titles = MainActivity.titles;
+    static ArrayList<String> titles = MainActivity.titles;
     static ArrayList<String> titlesFilter = MainActivity.titles;
     Boolean isFilter = false;
     static ArrayAdapter arrayAdapter;
