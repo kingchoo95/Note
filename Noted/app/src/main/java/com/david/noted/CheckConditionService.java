@@ -250,14 +250,16 @@ public class CheckConditionService extends Service{
         Intent showReminderIntent = new Intent(getApplicationContext(), NoteEditorActivity.class);
         Intent snoozeReminderIntent = new Intent(getApplicationContext(), SnoozeReminderActivity.class);
         snoozeReminderIntent.putExtra("noteId",selectedId);
-        Intent viewLocationIntent = new Intent(getApplicationContext(), NoteEditorActivity.class);
+        Intent viewLocationIntent = new Intent(getApplicationContext(), SearchLocationActivity.class);
         showReminderIntent.putExtra("noteId",selectedId);
+        viewLocationIntent.putExtra("noteId",selectedId);
         showReminderIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
         PendingIntent showIntent = PendingIntent.getActivity(getApplicationContext(),selectedId, showReminderIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         PendingIntent snoozeIntent = PendingIntent.getActivity(getApplicationContext(),selectedId,snoozeReminderIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        PendingIntent locationIntent = PendingIntent.getActivity(getApplicationContext(),0,viewLocationIntent, 0);
+        PendingIntent locationIntent = PendingIntent.getActivity(getApplicationContext(),selectedId,viewLocationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
         Notification notification = new Notification.Builder(getApplicationContext())
                 .setContentTitle(selectedTitle)
                 .setContentIntent(showIntent)
