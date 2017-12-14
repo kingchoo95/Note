@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
     static ArrayList<String> titles = new ArrayList<>();
     static ArrayList<String> locations = new ArrayList<>();
+    static ArrayList<String> dates = new ArrayList<>();
     static ArrayAdapter arrayAdapter;
     public int selectId = 0;
 
@@ -112,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.i("Resultnow",Integer.toString(c.getInt(idIndex)) + c.getString(titleIndex) + c.getString(noteIndex) +  c.getString(reminderTypeIndex) + c.getString(dateIndex) +  c.getString(timeIndex) +  c.getString(repeatByIndex) +c.getString(locationIndex) +c.getString(latitudeIndex)+c.getString(longitudeIndex)+Integer.toString(c.getInt(isTriggerIndex)));
                 titles.add(c.getString(titleIndex));
                 locations.add(c.getString(locationIndex));
+                dates.add(c.getString(dateIndex));
                 c.moveToNext();
             }
 
@@ -132,7 +134,6 @@ public class MainActivity extends AppCompatActivity {
         if(titles != null){
             listView.setAdapter(arrayAdapter);
         }
-
 
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

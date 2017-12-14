@@ -7,13 +7,11 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Filterable;
 import android.widget.ListView;
@@ -22,17 +20,15 @@ import android.widget.Filter;
 
 import java.util.ArrayList;
 
-
-
 public class SearchPlaceActivity extends AppCompatActivity {
-    SearchView searchView;
+
     static ArrayList<String> titlesASC = new ArrayList<>();
     static ArrayList<String> locationsASC = new ArrayList<>();
 
     ArrayList<String> titles = MainActivity.titles;
     ArrayList<String> locations = MainActivity.locations;
 
-    static CustomAdapter customAdapter;
+    CustomAdapter customAdapter;
     ListView listView;
     View convertView;
     Boolean ASC = true;
@@ -43,21 +39,19 @@ public class SearchPlaceActivity extends AppCompatActivity {
 
         runDatabase();
         //bottom navigation
-        BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
+        BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation_place);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
                 switch (item.getItemId()){
                     case R.id.action_decending:
-                        Log.i("sta up there","a to z");
                         ASC = false;
                         runDatabase();
 
 
                         break;
                     case R.id.action_acending:
-                        Log.i("sta up there","z to a");
                         ASC = true;
                         runDatabase();
 
@@ -153,6 +147,7 @@ public class SearchPlaceActivity extends AppCompatActivity {
 
         return position;
     }
+
     //create custom listview
     class CustomAdapter extends BaseAdapter implements Filterable{
 
@@ -191,11 +186,14 @@ public class SearchPlaceActivity extends AppCompatActivity {
 
 
     }
+
     @Override
     public void onResume(){
 
         runDatabase();
         super.onResume();
     }
+
+
 
 }

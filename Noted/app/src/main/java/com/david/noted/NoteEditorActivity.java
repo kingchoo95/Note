@@ -440,7 +440,7 @@ public class NoteEditorActivity extends AppCompatActivity {
                 onBackPressed();
                 return true;
             }else{
-                //Log.i("noteId","other");
+
                 noteDB.execSQL("UPDATE reminders SET title= '"+ editTextTitle.getText().toString() +"',note = '"+ editTextNotes.getText().toString() +"',reminderType = '" + dialogReminderType + "',date = '" + dialogDate + "',time = '"+ dialogTime +"', repeatBy = '" + dialogRepeatBy + "', location = '"+ dialogLocation +"',latitude = '"+ placeLatitude+"', longitude = '"+placeLongitude+"',isTrigger = '"+getIsTrigger +"'  WHERE id = "+ Integer.toString(noteId+1)+"");
                 if(SearchReminderActivity.arrayAdapter != null) {
 

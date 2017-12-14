@@ -1,6 +1,5 @@
 package com.david.noted;
 
-
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -68,8 +67,16 @@ public class SearchReminderActivity extends AppCompatActivity {
 
     }
 
+    //go to search plac activity
     public void enterSearchLocationActivity(View view){
         Intent intent = new Intent(this,SearchPlaceActivity.class);
+
+        startActivity(intent);
+    }
+
+    //go to search time activity
+    public void enterSearchTimeActivity(View view){
+        Intent intent = new Intent(this,SearchTimeActivity.class);
 
         startActivity(intent);
     }

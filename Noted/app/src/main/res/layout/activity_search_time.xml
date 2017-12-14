@@ -2,10 +2,9 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/placeSearchListViewId"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.david.noted.SearchPlaceActivity">
+    tools:context="com.david.noted.SearchTimeActivity">
 
 
     <LinearLayout
@@ -17,7 +16,7 @@
         tools:layout_editor_absoluteY="8dp">
 
         <ListView
-            android:id="@+id/placeListViewId"
+            android:id="@+id/timeListViewId"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -25,14 +24,14 @@
             tools:layout_editor_absoluteY="0dp" />
 
         <android.support.design.widget.BottomNavigationView
-            android:id="@+id/bottom_navigation_place"
+            android:id="@+id/bottom_navigation_time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
 
             android:layout_weight="1"
             app:itemBackground="@color/colorPrimaryDark"
-            app:menu="@menu/location_search_bottom__navigation"
+            app:menu="@menu/time_search_bottom_navigation"
             app:itemTextColor="@color/colorWhite"
             app:itemIconTint="@drawable/selector"
             tools:layout_editor_absoluteX="162dp"
@@ -41,7 +40,5 @@
         </android.support.design.widget.BottomNavigationView>
 
     </LinearLayout>
-
-
 
 </android.support.constraint.ConstraintLayout>

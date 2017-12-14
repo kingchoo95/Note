@@ -38,6 +38,7 @@
         <activity android:name=".SnoozeReminderActivity" />
         <activity android:name=".SearchReminderActivity" />
         <activity android:name=".SearchPlaceActivity" />
+        <activity android:name=".SearchTimeActivity"></activity>
     </application>
 
 </manifest>

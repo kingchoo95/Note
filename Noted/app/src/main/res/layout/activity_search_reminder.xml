@@ -27,6 +27,7 @@
             android:layout_weight="0.72"
             android:background="@android:color/holo_orange_light"
             android:drawableTop="@drawable/ic_access_time_black_24dp"
+            android:onClick="enterSearchTimeActivity"
             android:padding="10dp"
             android:text="Time Reminder"
             android:textColor="@color/common_google_signin_btn_text_dark_default"

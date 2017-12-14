@@ -100,7 +100,6 @@ public class CheckConditionService extends Service{
     SQLiteDatabase noteDB;
     public void checkCondition() {
         Calendar cal = Calendar.getInstance();
-        System.out.println("Current time => "+cal.getTime());
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String formattedDate = df.format(cal.getTime());
