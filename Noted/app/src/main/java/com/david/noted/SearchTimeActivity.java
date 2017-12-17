@@ -260,7 +260,6 @@ public class SearchTimeActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        Log.i("onresumenow","dajdajfljajlasjlfsaljfal");
         runDatabase();
         filteredDate();
         addArrayListIntoListView();

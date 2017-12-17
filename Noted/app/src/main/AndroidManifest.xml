@@ -39,7 +39,8 @@
         <activity android:name=".SearchReminderActivity" />
         <activity android:name=".SearchPlaceActivity" />
         <activity android:name=".SearchTimeActivity" />
-        <activity android:name=".SearchLocationActivity"></activity>
+        <activity android:name=".SearchLocationActivity" />
+        <activity android:name=".WebViewGoogleMapActivity"></activity>
     </application>
 
 </manifest>
