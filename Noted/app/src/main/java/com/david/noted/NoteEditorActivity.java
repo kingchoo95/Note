@@ -11,6 +11,8 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.icu.util.Calendar;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -78,7 +80,7 @@ public class NoteEditorActivity extends AppCompatActivity {
 
         Intent intent = new Intent(this, CheckConditionService.class);
         startService(intent);
-
+        bottomNavigationBar();
         noteDB = openOrCreateDatabase("Reminders", MODE_PRIVATE, null);
         repeatAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, repeats);
 
@@ -460,6 +462,30 @@ public class NoteEditorActivity extends AppCompatActivity {
         }
 
         return super.onKeyDown(keyCode, event);
+    }
+
+    public void bottomNavigationBar(){
+        /*
+        BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation_editor);
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+                switch (item.getItemId()){
+                    case R.id.action_decending:
+
+
+
+                        break;
+                    case R.id.action_acending:
+
+
+                        break;
+                }
+                return true;
+            }
+        });
+        */
     }
 
 }

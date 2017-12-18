@@ -58,7 +58,7 @@
             android:text="Sungai loong" />
 
         <Button
-            android:id="@+id/button4"
+            android:id="@+id/othersId"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_column="1"
@@ -71,7 +71,7 @@
             android:text="others" />
 
         <Button
-            android:id="@+id/button8"
+            android:id="@+id/groceriesId"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_column="1"
@@ -85,7 +85,7 @@
 
 
         <Button
-            android:id="@+id/button6"
+            android:id="@+id/cafesId"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_column="0"
@@ -98,7 +98,7 @@
             android:text="Cafes" />
 
         <Button
-            android:id="@+id/button5"
+            android:id="@+id/pharmaciesId"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_column="0"
@@ -111,7 +111,7 @@
             android:text="Pharmacies" />
 
         <Button
-            android:id="@+id/atmButtonId"
+            android:id="@+id/atmsId"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_column="1"
@@ -124,7 +124,7 @@
             android:text="ATMS" />
 
         <Button
-            android:id="@+id/button10"
+            android:id="@+id/restaurantsId"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_column="0"
@@ -137,7 +137,7 @@
             android:text="Restaurants" />
 
         <Button
-            android:id="@+id/button9"
+            android:id="@+id/gasStationId"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_column="1"

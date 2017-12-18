@@ -1,17 +1,31 @@
 package com.david.noted;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class SearchLocationActivity extends AppCompatActivity {
 
     int noteId;
+    Button userLocationButton;
+    Button othersButton;
+    Button atmsButton;
+    Button gasStationsButton;
+    Button pharmaciesButton;
+    Button cafesButton;
+    Button groceriesButton;
+    Button restaurantsButton;
+    String locationFound;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -19,13 +33,19 @@ public class SearchLocationActivity extends AppCompatActivity {
 
         Intent intentGetNoteId = getIntent();
         noteId = intentGetNoteId.getIntExtra("noteId",noteId);
-        String locationFound = runDatabase(noteId+1);
-        Button userLocationButton = (Button) findViewById(R.id.userLocationId);
-        if(locationFound.equals("")){
-            userLocationButton.setEnabled(false);
-            locationFound = "No Location Set";
-        }
-        userLocationButton.setText(locationFound);
+
+
+        userLocationButton = (Button) findViewById(R.id.userLocationId);
+        othersButton = (Button) findViewById(R.id.othersId);
+        atmsButton = (Button) findViewById(R.id.atmsId);
+        gasStationsButton = (Button) findViewById(R.id.gasStationId);
+        pharmaciesButton = (Button) findViewById(R.id.pharmaciesId);
+        cafesButton = (Button) findViewById(R.id.cafesId);
+        groceriesButton = (Button) findViewById(R.id.groceriesId);
+        restaurantsButton = (Button) findViewById(R.id.restaurantsId);
+
+
+        enableButton();
     }
 
     public String runDatabase(int noteId){
@@ -139,5 +159,42 @@ public class SearchLocationActivity extends AppCompatActivity {
 
     }
 
+    public boolean networkStatus(){
+        ConnectivityManager cm = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo ni = cm.getActiveNetworkInfo();
+        if(ni != null && ni.isConnected())
+            return true;
+
+        return false;
+    }
+    @Override
+    protected void onResume() {
+
+        enableButton();
+        super.onResume();
+    }
+
+    public void enableButton(){
+        locationFound = runDatabase(noteId+1);
+        boolean status = networkStatus();
+        if(!status){
+            Toast.makeText(this,"Please connect to internet!",Toast.LENGTH_LONG).show();
+        }
+
+            userLocationButton.setEnabled(status);
+            othersButton.setEnabled(status);
+            atmsButton.setEnabled(status);
+            gasStationsButton.setEnabled(status);
+            pharmaciesButton.setEnabled(status);
+            cafesButton.setEnabled(status);
+            groceriesButton.setEnabled(status);
+            restaurantsButton.setEnabled(status);
+        if(locationFound.equals("")){
+            userLocationButton.setEnabled(false);
+            locationFound = "No Location Set";
+        }
+
+        userLocationButton.setText(locationFound);
+    }
 }
 

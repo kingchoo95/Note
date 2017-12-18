@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/action_normalText"
+        android:enabled="true"
+        android:icon="@drawable/ic_text_format_black_24dp"
+        android:title="Text Only"
+        app:showAsAction="ifRoom"/>
+    <item android:id="@+id/action_tickBoxes"
+        android:enabled="true"
+        android:icon="@drawable/ic_format_list_bulleted_black_24dp"
+        android:title="Tick boxes"
+        app:showAsAction="ifRoom"/>
+
+    <item android:id="@+id/action_takePhoto"
+        android:enabled="true"
+        android:icon="@drawable/ic_photo_camera_black_24dp"
+        android:title="Take photo"
+        app:showAsAction="ifRoom"/>
+
+    <item android:id="@+id/action_recording"
+        android:enabled="true"
+        android:icon="@drawable/ic_mic_black_24dp"
+        android:title="Recording"
+        app:showAsAction="ifRoom"/>
+
+</menu>
