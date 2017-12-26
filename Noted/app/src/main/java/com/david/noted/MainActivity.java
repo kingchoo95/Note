@@ -209,8 +209,9 @@ public class MainActivity extends AppCompatActivity {
 
         switch (item.getItemId()){
 
-            case R.id.searchByTitleId : {
-                Log.i("search button", "Title clicked");
+            case R.id.addFriendsId : {
+                Intent intent = new Intent(this, LogInActivity.class);
+                startActivity(intent);
                 return true;
             }
 

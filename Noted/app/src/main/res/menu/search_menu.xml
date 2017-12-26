@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
-    <item android:id="@+id/searchByTitleId" android:title="Search By Title" ></item>
+    <item android:id="@+id/addFriendsId" android:title="Add Friends" ></item>
 
     <item android:id="@+id/searchByTimeId" android:title="Search By Time"></item>
 

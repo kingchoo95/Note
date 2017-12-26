@@ -363,10 +363,11 @@ public class NoteEditorActivity extends AppCompatActivity {
 
         if((getReminderDate=="" || getReminderTime=="")){
 
-            Toast.makeText(getApplicationContext(),"Please select time and date to save",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(),"Please update time and date to save",Toast.LENGTH_SHORT).show();
         }else{
             dialogDate = getReminderDate;
             dialogTime = getReminderTime;
+            dialogLocation = locationString;
             dialog.dismiss();
 
         }
@@ -379,7 +380,7 @@ public class NoteEditorActivity extends AppCompatActivity {
 
         if((locationString=="")){
 
-            Toast.makeText(getApplicationContext(),"Please select a location",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(),"Please update a location",Toast.LENGTH_SHORT).show();
         }else{
             dialogLocation = locationString;
 
@@ -394,7 +395,7 @@ public class NoteEditorActivity extends AppCompatActivity {
 
         if((locationString==""||getReminderDate=="" || getReminderTime=="")){
 
-            Toast.makeText(getApplicationContext(),"Please select time, date and location",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(),"Please update time, date and location",Toast.LENGTH_SHORT).show();
         }else{
             dialogLocation = locationString;
             dialogDate = getReminderDate;
@@ -465,19 +466,27 @@ public class NoteEditorActivity extends AppCompatActivity {
     }
 
     public void bottomNavigationBar(){
-        /*
+
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation_editor);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
                 switch (item.getItemId()){
-                    case R.id.action_decending:
+                    case R.id.action_normalText:
 
 
 
                         break;
-                    case R.id.action_acending:
+                    case R.id.action_tickBoxes:
+
+
+                        break;
+                    case R.id.action_takePhoto:
+
+
+                        break;
+                    case R.id.action_recording:
 
 
                         break;
@@ -485,7 +494,7 @@ public class NoteEditorActivity extends AppCompatActivity {
                 return true;
             }
         });
-        */
+
     }
 
 }

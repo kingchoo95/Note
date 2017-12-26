@@ -25,6 +25,7 @@ public class SearchLocationActivity extends AppCompatActivity {
     Button groceriesButton;
     Button restaurantsButton;
     String locationFound;
+    String setText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,11 +79,8 @@ public class SearchLocationActivity extends AppCompatActivity {
 
     public void runUserLocation(View view){
         Intent intent = new Intent(this,WebViewGoogleMapActivity.class);
-        Button buttonClicked = (Button) findViewById(R.id.userLocationId);
 
-        String userLocation = buttonClicked.getText().toString();
-        String address = "https://www.google.com.my/maps/search/"+userLocation ;
-
+        String address = "https://www.google.com.my/maps/search/"+locationFound ;
 
         intent.putExtra("address",address);
         this.startActivity(intent);
@@ -193,8 +191,12 @@ public class SearchLocationActivity extends AppCompatActivity {
             userLocationButton.setEnabled(false);
             locationFound = "No Location Set";
         }
-
-        userLocationButton.setText(locationFound);
+        if(locationFound.length()> 15){
+            setText = locationFound.substring(0,13)+ "...";
+        }else{
+            setText = locationFound;
+        }
+        userLocationButton.setText(setText);
     }
 }
 
