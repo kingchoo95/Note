@@ -3,11 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
-    <item android:id="@+id/addFriendsId" android:title="Add Friends" ></item>
+    <item android:id="@+id/addFriendsId" android:title="Find Helpers" ></item>
 
-    <item android:id="@+id/searchByTimeId" android:title="Search By Time"></item>
-
-    <item android:id="@+id/searchByLocationId" android:title="Search By Location"></item>
     <item
         android:id="@+id/searchReminderId"
         android:icon="@drawable/ic_search_black_24dp"

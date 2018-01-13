@@ -47,8 +47,12 @@
         <activity android:name=".SearchTimeActivity" />
         <activity android:name=".SearchLocationActivity" />
         <activity android:name=".WebViewGoogleMapActivity" />
-        <activity android:name=".LogInActivity" />
-        <activity android:name=".FriendsListActivity"></activity>
+        <activity
+            android:name=".LogInActivity"
+            android:noHistory="true" />
+        <activity android:name=".FriendsListActivity" />
+        <activity android:name=".AddFriendsActivity" />
+        <activity android:name=".ChatActivity"></activity>
     </application>
 
 </manifest>

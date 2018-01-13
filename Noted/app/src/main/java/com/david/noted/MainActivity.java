@@ -215,15 +215,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
 
-            case R.id.searchByTimeId : {
-                Log.i("search button", "Time clicked");
-                return true;
-            }
 
-            case  R.id.searchByLocationId : {
-                Log.i("search button", "location clicked");
-                return true;
-            }
 
             default : {
                 return false;

@@ -46,7 +46,7 @@ public class SearchTimeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_time);
-
+        setTitle("Search By Date");
         todaysDate = getTodayDate();
         thisMonth = todaysDate.substring(0,7);
 
