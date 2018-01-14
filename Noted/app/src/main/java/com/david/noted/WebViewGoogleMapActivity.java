@@ -15,7 +15,7 @@ public class WebViewGoogleMapActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_view_google_map);
-
+        getSupportActionBar().hide();
         Intent intent = getIntent();
         String address = intent.getExtras().getString("address");
 

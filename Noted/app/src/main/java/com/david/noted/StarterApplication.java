@@ -14,23 +14,7 @@ import android.app.Application;
 import com.parse.Parse;
 import com.parse.ParseACL;
 
-import android.app.Application;
-import android.util.Log;
-import android.view.View;
 
-import com.parse.FindCallback;
-import com.parse.GetCallback;
-import com.parse.LogInCallback;
-import com.parse.Parse;
-import com.parse.ParseACL;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
-import com.parse.ParseUser;
-import com.parse.SaveCallback;
-import com.parse.SignUpCallback;
-
-import java.util.List;
 
 
 public class StarterApplication extends Application {

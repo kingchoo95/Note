@@ -2,9 +2,10 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/addHelperId"
-        android:icon="@drawable/ic_person_add_black_24dp"
-        android:title="Add Helper"
+        android:id="@+id/removeHelperId"
+        android:icon="@drawable/ic_thumb_down_black_24dp"
+        android:title="Remove Helper"
         app:showAsAction="always" />
 </menu>
+
 

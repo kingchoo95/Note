@@ -21,7 +21,7 @@
         app:layout_constraintHorizontal_bias="0.048"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginBottom="8dp"
-        app:layout_constraintVertical_bias="0.016"
+        app:layout_constraintVertical_bias="0.116"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp" />
 
@@ -38,7 +38,7 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="8dp"
         app:layout_constraintHorizontal_bias="0.545"
-        app:layout_constraintVertical_bias="0.201"
+        app:layout_constraintVertical_bias="0.621"
         android:id="@+id/gridLayout"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp">
@@ -55,7 +55,8 @@
             android:layout_rowWeight="1"
             android:drawableLeft="@drawable/ic_location_city_black_24dp"
             android:onClick="runUserLocation"
-            android:text="Sungai loooooooog" />
+            android:text="Sungai loooooooog"
+            android:textColor="@color/colorPrimaryDark" />
 
         <Button
             android:id="@+id/othersId"
@@ -68,7 +69,8 @@
             android:layout_rowWeight="1"
             android:drawableLeft="@drawable/ic_add_location_black_24dp"
             android:onClick="runOthers"
-            android:text="others" />
+            android:text="others"
+            android:textColor="@android:color/holo_red_dark" />
 
         <Button
             android:id="@+id/groceriesId"
@@ -81,7 +83,8 @@
             android:layout_rowWeight="1"
             android:drawableLeft="@drawable/ic_local_grocery_store_black_24dp"
             android:onClick="runNearByGroceries"
-            android:text="Groceries" />
+            android:text="Groceries"
+            android:textColor="@android:color/holo_blue_light" />
 
 
         <Button
@@ -95,7 +98,8 @@
             android:layout_rowWeight="1"
             android:drawableLeft="@drawable/ic_local_cafe_black_24dp"
             android:onClick="runNearByCafes"
-            android:text="Cafes" />
+            android:text="Cafes"
+            android:textColor="@android:color/holo_green_light" />
 
         <Button
             android:id="@+id/pharmaciesId"
@@ -108,7 +112,8 @@
             android:layout_rowWeight="1"
             android:drawableLeft="@drawable/ic_local_pharmacy_black_24dp"
             android:onClick="runNearByPharmacies"
-            android:text="Pharmacies" />
+            android:text="Pharmacies"
+            android:textColor="@android:color/holo_red_light" />
 
         <Button
             android:id="@+id/atmsId"
@@ -121,7 +126,8 @@
             android:layout_rowWeight="1"
             android:drawableLeft="@drawable/ic_local_atm_black_24dp"
             android:onClick="runNearByATMs"
-            android:text="ATMS" />
+            android:text="ATMS"
+            android:textColor="@android:color/holo_orange_light" />
 
         <Button
             android:id="@+id/restaurantsId"
@@ -134,7 +140,8 @@
             android:layout_rowWeight="1"
             android:drawableLeft="@drawable/ic_restaurant_black_24dp"
             android:onClick="runNearByRestaurants"
-            android:text="Restaurants" />
+            android:text="Restaurants"
+            android:textColor="@android:color/holo_purple" />
 
         <Button
             android:id="@+id/gasStationId"
@@ -147,7 +154,8 @@
             android:layout_rowWeight="1"
             android:drawableLeft="@drawable/ic_local_gas_station_black_24dp"
             android:onClick="runNearByGasStation"
-            android:text="Gas Stations" />
+            android:text="Gas Stations"
+            android:textColor="@android:color/holo_green_light" />
 
 
     </GridLayout>

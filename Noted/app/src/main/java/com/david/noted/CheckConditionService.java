@@ -249,6 +249,7 @@ public class CheckConditionService extends Service{
     public void showAlert(){
         Intent showReminderIntent = new Intent(getApplicationContext(), NoteEditorActivity.class);
         Intent snoozeReminderIntent = new Intent(getApplicationContext(), SnoozeReminderActivity.class);
+        Intent helperReminderIntent = new Intent(getApplicationContext(), FriendsListActivity.class);
         snoozeReminderIntent.putExtra("noteId",selectedId);
         Intent viewLocationIntent = new Intent(getApplicationContext(), SearchLocationActivity.class);
         showReminderIntent.putExtra("noteId",selectedId);
@@ -256,7 +257,7 @@ public class CheckConditionService extends Service{
         showReminderIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
         PendingIntent showIntent = PendingIntent.getActivity(getApplicationContext(),selectedId, showReminderIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
+        PendingIntent helperIntent = PendingIntent.getActivity(getApplicationContext(),selectedId, helperReminderIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         PendingIntent snoozeIntent = PendingIntent.getActivity(getApplicationContext(),selectedId,snoozeReminderIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         PendingIntent locationIntent = PendingIntent.getActivity(getApplicationContext(),selectedId,viewLocationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -265,6 +266,7 @@ public class CheckConditionService extends Service{
                 .setContentIntent(showIntent)
                 .addAction(android.R.drawable.sym_action_chat,"Snooze", snoozeIntent)
                 .addAction(android.R.drawable.ic_menu_mylocation, "View Location", locationIntent)
+                .addAction(android.R.drawable.ic_menu_mylocation, "Find Helper", helperIntent)
                 .setSmallIcon(android.R.drawable.sym_def_app_icon)
                 .build();
 

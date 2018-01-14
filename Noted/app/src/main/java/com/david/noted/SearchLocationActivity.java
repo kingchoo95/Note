@@ -34,7 +34,7 @@ public class SearchLocationActivity extends AppCompatActivity {
 
         Intent intentGetNoteId = getIntent();
         noteId = intentGetNoteId.getIntExtra("noteId",noteId);
-
+        getSupportActionBar().hide();
 
         userLocationButton = (Button) findViewById(R.id.userLocationId);
         othersButton = (Button) findViewById(R.id.othersId);
