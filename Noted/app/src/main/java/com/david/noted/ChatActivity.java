@@ -1,5 +1,7 @@
 package com.david.noted;
 
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
@@ -7,7 +9,6 @@ import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -37,6 +38,8 @@ public class ChatActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+
+
         setTitle("Loading...");
         arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, messages);
 
@@ -46,6 +49,9 @@ public class ChatActivity extends AppCompatActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
+
+
+
 
                 Intent intent = getIntent();
 
@@ -179,6 +185,7 @@ public class ChatActivity extends AppCompatActivity {
         }
         return true;
     }
+
 
 }
 

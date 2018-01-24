@@ -6,8 +6,10 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -32,9 +34,20 @@ import android.util.Log;
 import android.widget.Toast;
 
 
+import com.parse.FindCallback;
+import com.parse.Parse;
+import com.parse.ParseException;
+import com.parse.ParseGeoPoint;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
+
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -57,6 +70,9 @@ public class CheckConditionService extends Service{
         super.onCreate();
 
 
+
+
+        //checkNewMessageArrive();
          locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
@@ -88,6 +104,7 @@ public class CheckConditionService extends Service{
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2 * 60 * 1000,500, locationListener);
 
 
+
     }
 
     @Nullable
@@ -107,6 +124,7 @@ public class CheckConditionService extends Service{
 
         String[] dateNow = formattedDate.split(" ");
         String timeNow =  dateNow[1].substring(0,5);
+
 
         try{
 
@@ -232,13 +250,13 @@ public class CheckConditionService extends Service{
             public void run() {
               checkCondition();
 
-            //Log.i("5sec","pass");
-
             }
         }, 0, 10*1000);
 
 
     }
+
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         checkTimer();
@@ -291,6 +309,56 @@ public class CheckConditionService extends Service{
 
 
     }
+
+    /*
+    public void checkNewMessageArrive() {
+
+        if (ParseUser.getCurrentUser()!=null){
+
+            Date currentTime = Calendar.getInstance().getTime();
+            ParseQuery<ParseObject> newQuery = new ParseQuery<ParseObject>("Message");
+            Log.i("currentTime1",currentTime.toString());
+            Log.i("currentTime1",ParseUser.getCurrentUser().getUsername());
+
+            newQuery.whereGreaterThanOrEqualTo("createdAt", "2018-01-13");
+            newQuery.whereEqualTo("receiver", ParseUser.getCurrentUser().getUsername());
+            List<ParseQuery<ParseObject>> queries = new ArrayList<ParseQuery<ParseObject>>();
+            queries.add(newQuery);
+
+
+
+            newQuery.findInBackground(new FindCallback<ParseObject>() {
+
+                @Override
+                public void done(List<ParseObject> objects, ParseException e) {
+                    if (e == null) {
+                        if (objects.size() > 0) {
+
+                            for (ParseObject message : objects) {
+
+                                String messageContent = ParseUser.getCurrentUser().getUsername();
+
+                            }
+                        }
+                    }
+
+                    Notification notification = new Notification.Builder(getApplicationContext())
+                            .setContentTitle("You have new message from + "queries.get(0).toString())
+                            .setSmallIcon(android.R.drawable.sym_def_app_icon)
+                            .build();
+
+
+                    NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                    notificationManager.notify(1, notification);
+
+                }
+            });
+        }
+
+    }
+    */
+
+
 
 }
 
