@@ -226,6 +226,4 @@ public class MainActivity extends AppCompatActivity {
     }
     //search menu on header end
 
-
-
 }

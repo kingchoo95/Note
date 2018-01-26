@@ -13,6 +13,8 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -43,11 +45,13 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -69,10 +73,6 @@ public class CheckConditionService extends Service{
     public void onCreate() {
         super.onCreate();
 
-
-
-
-        //checkNewMessageArrive();
          locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
@@ -240,6 +240,7 @@ public class CheckConditionService extends Service{
             e.printStackTrace();
         }
 
+
     }
 
     public void checkTimer(){
@@ -248,7 +249,8 @@ public class CheckConditionService extends Service{
         myTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-              checkCondition();
+                checkCondition();
+
 
             }
         }, 0, 10*1000);
@@ -267,7 +269,7 @@ public class CheckConditionService extends Service{
     public void showAlert(){
         Intent showReminderIntent = new Intent(getApplicationContext(), NoteEditorActivity.class);
         Intent snoozeReminderIntent = new Intent(getApplicationContext(), SnoozeReminderActivity.class);
-        Intent helperReminderIntent = new Intent(getApplicationContext(), FriendsListActivity.class);
+        Intent helperReminderIntent = new Intent(getApplicationContext(), LogInActivity.class);
         snoozeReminderIntent.putExtra("noteId",selectedId);
         Intent viewLocationIntent = new Intent(getApplicationContext(), SearchLocationActivity.class);
         showReminderIntent.putExtra("noteId",selectedId);
@@ -309,6 +311,9 @@ public class CheckConditionService extends Service{
 
 
     }
+
+
+
 
     /*
     public void checkNewMessageArrive() {

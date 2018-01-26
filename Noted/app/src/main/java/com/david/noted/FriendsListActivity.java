@@ -1,12 +1,10 @@
 package com.david.noted;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.*;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,11 +18,9 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.GoogleMap;
+
 import com.parse.FindCallback;
-import com.parse.Parse;
 import com.parse.ParseException;
-import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -33,9 +29,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class FriendsListActivity extends AppCompatActivity {
-
+    LocationManager locationManager ;
+    LocationListener locationListener;
 
     ArrayList<String> helperDatabaseArrayList = new ArrayList<String>();
     ArrayList<String> helperLocationArrayList = new ArrayList<String>();
@@ -95,12 +94,6 @@ public class FriendsListActivity extends AppCompatActivity {
 
         }
 
-        Log.i("testting", helperDatabaseArrayList.toString());
-        Log.i("testting", helperLocationArrayList.toString());
-        Log.i("testting", helperUsernameArrayList.toString());
-        Log.i("testting", helperUsernameAndLocationArrayList.toString());
-
-
     }
 
     @Override
@@ -119,6 +112,15 @@ public class FriendsListActivity extends AppCompatActivity {
         if (item.getItemId() == R.id.addHelperId) {
             Intent intent = new Intent(FriendsListActivity.this, AddFriendsActivity.class);
             startActivity(intent);
+        }
+        if (item.getItemId() == R.id.logOutId) {
+
+            ParseUser.getCurrentUser().logOut();
+            Intent intent = new Intent(FriendsListActivity.this, MainActivity.class);
+            startActivity(intent);
+
+            Toast.makeText(this, "Good Bye", Toast.LENGTH_SHORT).show();
+
         }
         return true;
     }
@@ -155,8 +157,7 @@ public class FriendsListActivity extends AppCompatActivity {
 
     public void helperLocation(){
 
-        LocationManager locationManager ;
-        LocationListener locationListener;
+
 
         locationListener = new LocationListener() {
             @Override
@@ -186,8 +187,7 @@ public class FriendsListActivity extends AppCompatActivity {
         };
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         //noinspection MissingPermission
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2 * 60 * 1000,500, locationListener);
-
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0,0, locationListener);
 
         Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
         try {
@@ -195,7 +195,7 @@ public class FriendsListActivity extends AppCompatActivity {
             List<Address> listAddress = geocoder.getFromLocation(getNowLatitude,getNowLongitude,1);
                 String locationName = "";
             if(listAddress != null && listAddress.size() >0){
-                
+
                 if(listAddress.get(0).getLocality() != null ){
                     locationName += listAddress.get(0).getLocality() + ", ";
                 }
@@ -203,11 +203,14 @@ public class FriendsListActivity extends AppCompatActivity {
                 if(listAddress.get(0).getCountryName() != null ){
                     locationName += listAddress.get(0).getCountryName() + " ";
                 }
+
                 ParseObject userCurrentLocation = new ParseObject("UserCurrentLocation");
 
                 userCurrentLocation.put("username", ParseUser.getCurrentUser().getUsername());
                 userCurrentLocation.put("Location", locationName);
                 userCurrentLocation.saveInBackground();
+                Toast.makeText(this, "Your current location at "+locationName, Toast.LENGTH_SHORT).show();
+
             }
         } catch (IOException e) {
 
@@ -233,30 +236,34 @@ public class FriendsListActivity extends AppCompatActivity {
                     }
 
                 }
+
             }
         });
 
 
     }
+
     public void updateLocation(View view){
         Button updateUserLocationButton = (Button) findViewById(R.id.updateUserLocationId);
         if(isRemoveLocation){
 
             removeHelperLocation();
             updateUserLocationButton.setText("Update Location");
+            Log.i("currentState",Boolean.toString(isRemoveLocation));
             isRemoveLocation = false;
 
         }else{
 
             helperLocation();
             updateUserLocationButton.setText("Remove Location");
+            Log.i("currentState",Boolean.toString(isRemoveLocation));
             isRemoveLocation = true;
 
         }
 
     }
 
-    public void addLocationToHelper(){
+        public void addLocationToHelper(){
 
         ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("UserCurrentLocation");
         query.whereNotEqualTo("username",ParseUser.getCurrentUser().getUsername());
@@ -290,9 +297,14 @@ public class FriendsListActivity extends AppCompatActivity {
 
     }
 
+
+
+
     @Override
     protected void onResume() {
         super.onResume();
         addLocationToHelper();
     }
+
+
 }
