@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
         try{
 
             SQLiteDatabase noteDB = this.openOrCreateDatabase("Reminders", MODE_PRIVATE, null);
-            noteDB.execSQL("CREATE TABLE IF NOT EXISTS reminders (id INTEGER, title VARCHAR, note VARCHAR, reminderType VARCHAR, date VARCHAR, time VARCHAR, repeatBy VARCHAR, location VARCHAR, latitude REAL, longitude REAL, isTrigger INTEGER)");
+            noteDB.execSQL("CREATE TABLE IF NOT EXISTS reminders (id INTEGER, title VARCHAR, note VARCHAR, image VARCHAR, reminderType VARCHAR, date VARCHAR, time VARCHAR, repeatBy VARCHAR, location VARCHAR, latitude REAL, longitude REAL, isTrigger INTEGER)");
 
 
             Cursor c = noteDB.rawQuery("SELECT * FROM reminders",null);
@@ -214,8 +214,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
                 return true;
             }
-
-
 
             default : {
                 return false;

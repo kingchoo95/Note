@@ -1,19 +1,29 @@
 package com.david.noted;
 
+import android.Manifest;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.icu.util.Calendar;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -23,6 +33,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -33,6 +44,10 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 
 public class NoteEditorActivity extends AppCompatActivity {
 
@@ -46,6 +61,7 @@ public class NoteEditorActivity extends AppCompatActivity {
     String locationString = "";
     String getReminderDate = "";
     String getReminderTime = "";
+    String imageLocation = "";
     Float getPlaceLatitude = (float)200;
     Float getPlaceLongitude = (float)200;
     Float placeLatitude;
@@ -68,7 +84,8 @@ public class NoteEditorActivity extends AppCompatActivity {
 
     EditText editTextTitle,editTextNotes;
     //Declear for date dialog
-
+    ImageView imageView;
+    Boolean isTakePhoto = false;
 
 
     @Override
@@ -78,14 +95,19 @@ public class NoteEditorActivity extends AppCompatActivity {
         setContentView(R.layout.activity_note_editor);
         //services to check condition
 
+        imageView = (ImageView) findViewById(R.id.imageViewId);
+        editTextTitle = (EditText) findViewById(R.id.editTextTitleId);
+        editTextNotes = (EditText) findViewById(R.id.editTextAddNoteHereId);
+
+
+
         Intent intent = new Intent(this, CheckConditionService.class);
         startService(intent);
         bottomNavigationBar();
         noteDB = openOrCreateDatabase("Reminders", MODE_PRIVATE, null);
         repeatAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, repeats);
 
-        editTextTitle = (EditText) findViewById(R.id.editTextTitleId);
-        editTextNotes = (EditText) findViewById(R.id.editTextAddNoteHereId);
+
 
         intent = getIntent();
         dialog = new Dialog(NoteEditorActivity.this);
@@ -99,6 +121,7 @@ public class NoteEditorActivity extends AppCompatActivity {
             int idIndex = c.getColumnIndex("id");
             int titleIndex = c.getColumnIndex("title");
             int noteIndex = c.getColumnIndex("note");
+            int imageIndex = c.getColumnIndex("image");
             int reminderTypeIndex = c.getColumnIndex("reminderType");
             int dateIndex = c.getColumnIndex("date");
             int timeIndex = c.getColumnIndex("time");
@@ -110,10 +133,17 @@ public class NoteEditorActivity extends AppCompatActivity {
 
             c.moveToFirst();
 
-           Log.i("Resultdbcontidion",Integer.toString(c.getInt(idIndex)) + c.getString(titleIndex) + c.getString(noteIndex) + c.getString(reminderTypeIndex) + c.getString(dateIndex) + c.getString(repeatByIndex) + c.getString(locationIndex) + c.getString(latitudeIndex)+" " + c.getString(longitudeIndex));
+           //Log.i("Resultdbcontidion",Integer.toString(c.getInt(idIndex)) + c.getString(titleIndex) + c.getString(noteIndex) + c.getString(reminderTypeIndex) + c.getString(dateIndex) + c.getString(repeatByIndex) + c.getString(locationIndex) + c.getString(latitudeIndex)+" " + c.getString(longitudeIndex));
 
             editTextTitle.setText(c.getString(titleIndex));
             editTextNotes.setText(c.getString(noteIndex));
+
+            //imageView.setImageBitmap(BitmapFactory.decodeByteArray( Base64.decode(c.getString(imageIndex), 0), 0, Base64.decode(c.getString(imageIndex), 0).length));
+            imageLocation = c.getString(imageIndex);
+            if(imageLocation != null) {
+                imageView.setImageURI(Uri.fromFile(new File(imageLocation)));
+            }
+
             dialogReminderType = c.getString(reminderTypeIndex);
             dialogDate = c.getString(dateIndex);
             dialogTime = c.getString(timeIndex);
@@ -121,13 +151,42 @@ public class NoteEditorActivity extends AppCompatActivity {
             dialogLocation =  c.getString(locationIndex);
             getIsTrigger =  c.getInt(isTriggerIndex);
             placeLatitude = c.getFloat(latitudeIndex);
-            placeLongitude = c.getFloat(longitudeIndex) ;
+            placeLongitude = c.getFloat(longitudeIndex);
 
         }else{
-
+            hideImageView();
             //noteId = MainActivity.titles.size() - 1;
             MainActivity.arrayAdapter.notifyDataSetChanged();
         }
+
+        if(!imageLocation.equals("")){
+            showImageView();
+        }else{
+            hideImageView();
+        }
+
+        imageView.setOnLongClickListener(new View.OnLongClickListener() {
+
+            @Override
+            public boolean onLongClick(View v) {
+                new AlertDialog.Builder(NoteEditorActivity.this)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setTitle("Are you sure?")
+                        .setMessage("Do you want to remove photo?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                imageLocation = "";
+                                hideImageView();
+                            }
+
+                        }).setNegativeButton("No",null).show();
+
+
+                return true;
+            }
+        });
 
     }
     // menu bar for add reminder start
@@ -351,10 +410,18 @@ public class NoteEditorActivity extends AppCompatActivity {
         dialog.show();
         return true;
 
+    }else if(item.getItemId() == R.id.addPhotoId){
+            takeImage();
+            Log.i("photoadded","photo added!!!");
+        return true;
+
+
+    }else if(item.getItemId() == R.id.addAudioId){
+
+            Log.i("audioadded","audio added!!!");
+        return true;
     }else{
-
         return false;
-
     }
 
 }
@@ -436,7 +503,7 @@ public class NoteEditorActivity extends AppCompatActivity {
                 SQLiteDatabase noteDB = openOrCreateDatabase("Reminders", MODE_PRIVATE, null);
                 int numRows = (int) DatabaseUtils.queryNumEntries(noteDB, "reminders");
                 Log.i("noteId","-1");
-                noteDB.execSQL("INSERT INTO reminders (id, title, note, reminderType, date, time, repeatBy, location, latitude, longitude, isTrigger) VALUES ( " + Integer.toString(numRows+1) + ",'" + editTextTitle.getText().toString() + "' ,'" + editTextNotes.getText().toString() + "' ,'"+ dialogReminderType +"',  '"+ dialogDate +"', '"+  dialogTime +"','"+ dialogRepeatBy +"', '"+ dialogLocation +"','"+ placeLatitude +"' ,'"+ placeLongitude +"','0')");
+                noteDB.execSQL("INSERT INTO reminders (id, title, note,image, reminderType, date, time, repeatBy, location, latitude, longitude, isTrigger) VALUES ( " + Integer.toString(numRows+1) + ",'" + editTextTitle.getText().toString() + "' ,'" + editTextNotes.getText().toString() + "','"+ imageLocation +"' ,'"+ dialogReminderType +"', '"+ dialogDate +"', '"+  dialogTime +"','"+ dialogRepeatBy +"', '"+ dialogLocation +"','"+ placeLatitude +"' ,'"+ placeLongitude +"','0')");
 
                 MainActivity.titles.add(editTextTitle.getText().toString());
                 MainActivity.arrayAdapter.notifyDataSetChanged();
@@ -444,7 +511,7 @@ public class NoteEditorActivity extends AppCompatActivity {
                 return true;
             }else{
 
-                noteDB.execSQL("UPDATE reminders SET title= '"+ editTextTitle.getText().toString() +"',note = '"+ editTextNotes.getText().toString() +"',reminderType = '" + dialogReminderType + "',date = '" + dialogDate + "',time = '"+ dialogTime +"', repeatBy = '" + dialogRepeatBy + "', location = '"+ dialogLocation +"',latitude = '"+ placeLatitude+"', longitude = '"+placeLongitude+"',isTrigger = '"+getIsTrigger +"'  WHERE id = "+ Integer.toString(noteId+1)+"");
+                noteDB.execSQL("UPDATE reminders SET title= '"+ editTextTitle.getText().toString() +"',note = '"+ editTextNotes.getText().toString() +"',image = '"+ imageLocation +"',reminderType = '" + dialogReminderType + "',date = '" + dialogDate + "',time = '"+ dialogTime +"', repeatBy = '" + dialogRepeatBy + "', location = '"+ dialogLocation +"',latitude = '"+ placeLatitude+"', longitude = '"+placeLongitude+"',isTrigger = '"+getIsTrigger +"'  WHERE id = "+ Integer.toString(noteId+1)+"");
                 if(SearchReminderActivity.arrayAdapter != null) {
 
                     SearchReminderActivity.titlesFilter.set(noteId, editTextTitle.getText().toString());
@@ -476,25 +543,101 @@ public class NoteEditorActivity extends AppCompatActivity {
                     case R.id.action_normalText:
 
 
-
                         break;
                     case R.id.action_tickBoxes:
 
 
                         break;
-                    case R.id.action_takePhoto:
 
-
-                        break;
-                    case R.id.action_recording:
-
-
-                        break;
                 }
                 return true;
             }
         });
 
     }
+
+    public void takeImage() {
+
+       // if(isTakePhoto){
+        if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)  != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+        }else{
+
+
+            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            startActivityForResult(intent, 1);
+        }
+
+       // }else{
+       //     imageView.setVisibility(View.GONE);
+       //     editTextNotes.getLayoutParams().height = 2200;
+       // }
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == 1 && resultCode == RESULT_OK && data != null){
+            Uri selectedImage = data.getData();
+
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
+                imageView.setImageBitmap(bitmap);
+
+
+                String[] filePathColumn = {MediaStore.Images.Media.DATA};
+                Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+                if(cursor.moveToFirst()){
+                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                    imageLocation = cursor.getString(columnIndex);
+                    if(!imageLocation.equals("")){
+                        showImageView();
+                    }else{
+                        hideImageView();
+                    }
+
+                }
+                cursor.close();
+
+
+                //ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                //bitmap.compress(Bitmap.CompressFormat.PNG,     0, bos);
+                //byte[] byteArray = bos.toByteArray();
+                //encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == 1) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                takeImage();
+            }
+        }
+    }
+
+    public void showImageView(){
+        imageView.setVisibility(View.VISIBLE);
+        imageView.getLayoutParams().height = 700;
+        editTextNotes.getLayoutParams().height = 1500;
+    }
+
+    public void hideImageView(){
+
+        imageView.setVisibility(View.GONE);
+        editTextNotes.getLayoutParams().height = 2200;
+
+    }
+
 
 }

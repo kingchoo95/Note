@@ -2,8 +2,20 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item
+        android:id="@+id/addPhotoId"
+        android:icon="@drawable/ic_add_a_photo_black_24dp"
+        android:title="Add photo"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/addAudioId"
+        android:icon="@drawable/ic_mic_black_24dp"
+        android:title="Add audio"
+        app:showAsAction="always" />
+
+    <item
         android:id="@+id/addReminderId"
         android:icon="@drawable/ic_add_reminder_black_24dp"
         android:title="Add Reminder"
         app:showAsAction="always" />
+
 </menu>
