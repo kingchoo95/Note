@@ -18,11 +18,14 @@ import android.icu.util.Calendar;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.speech.RecognizerIntent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -48,6 +51,7 @@ import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 public class NoteEditorActivity extends AppCompatActivity {
 
@@ -417,7 +421,7 @@ public class NoteEditorActivity extends AppCompatActivity {
 
 
     }else if(item.getItemId() == R.id.addAudioId){
-
+            voiceInput();
             Log.i("audioadded","audio added!!!");
         return true;
     }else{
@@ -580,6 +584,15 @@ public class NoteEditorActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+
+        if(requestCode == 3&& resultCode == RESULT_OK ){
+
+            List<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+
+            String text = results.get(0);
+            editTextNotes.setText(text);
+
+        }
         if(requestCode == 1 && resultCode == RESULT_OK && data != null){
             Uri selectedImage = data.getData();
 
@@ -638,6 +651,40 @@ public class NoteEditorActivity extends AppCompatActivity {
         editTextNotes.getLayoutParams().height = 2200;
 
     }
+
+    public void voiceInput(){
+        Intent i = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        i.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        startActivityForResult(i, 3);
+
+
+    }
+
+
+    public void detectNextLine(){
+        editTextNotes.addTextChangedListener( new TextWatcher(){
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence txt, int start, int before, int count ) {
+                if( -1 != txt.toString().indexOf("\n") ){
+                    
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        } );
+
+    }
+
+
 
 
 }
