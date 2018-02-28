@@ -33,10 +33,18 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -48,10 +56,18 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.sql.Array;
+import java.util.ArrayList;
 import java.util.List;
+
+import static com.david.noted.MainActivity.arrayAdapter;
 
 public class NoteEditorActivity extends AppCompatActivity {
 
@@ -66,13 +82,16 @@ public class NoteEditorActivity extends AppCompatActivity {
     String getReminderDate = "";
     String getReminderTime = "";
     String imageLocation = "";
+    String convertedArrayList= "";
     Float getPlaceLatitude = (float)200;
     Float getPlaceLongitude = (float)200;
     Float placeLatitude;
     Float placeLongitude;
     int getIsTrigger;
-
-
+    Button addListItemButton;
+    static CustomAdapter customAdapter;
+    ArrayList<String> listItemArray = new ArrayList<>();
+    ListView listItem;
 
     //make string array for spinner
     String repeats[]={"Does not repeat","Daily","Weekly","Monthly","Yearly"};
@@ -89,7 +108,7 @@ public class NoteEditorActivity extends AppCompatActivity {
     EditText editTextTitle,editTextNotes;
     //Declear for date dialog
     ImageView imageView;
-    Boolean isTakePhoto = false;
+
 
 
     @Override
@@ -99,10 +118,11 @@ public class NoteEditorActivity extends AppCompatActivity {
         setContentView(R.layout.activity_note_editor);
         //services to check condition
 
+        listItem = (ListView) findViewById(R.id.listItemListViewId);
         imageView = (ImageView) findViewById(R.id.imageViewId);
         editTextTitle = (EditText) findViewById(R.id.editTextTitleId);
         editTextNotes = (EditText) findViewById(R.id.editTextAddNoteHereId);
-
+        addListItemButton = (Button) findViewById(R.id.addListItemButtonId);
 
 
         Intent intent = new Intent(this, CheckConditionService.class);
@@ -125,6 +145,7 @@ public class NoteEditorActivity extends AppCompatActivity {
             int idIndex = c.getColumnIndex("id");
             int titleIndex = c.getColumnIndex("title");
             int noteIndex = c.getColumnIndex("note");
+            int checkListIndex = c.getColumnIndex("checkList");
             int imageIndex = c.getColumnIndex("image");
             int reminderTypeIndex = c.getColumnIndex("reminderType");
             int dateIndex = c.getColumnIndex("date");
@@ -141,13 +162,11 @@ public class NoteEditorActivity extends AppCompatActivity {
 
             editTextTitle.setText(c.getString(titleIndex));
             editTextNotes.setText(c.getString(noteIndex));
-
-            //imageView.setImageBitmap(BitmapFactory.decodeByteArray( Base64.decode(c.getString(imageIndex), 0), 0, Base64.decode(c.getString(imageIndex), 0).length));
             imageLocation = c.getString(imageIndex);
             if(imageLocation != null) {
                 imageView.setImageURI(Uri.fromFile(new File(imageLocation)));
             }
-
+            convertedArrayList = c.getString(checkListIndex);
             dialogReminderType = c.getString(reminderTypeIndex);
             dialogDate = c.getString(dateIndex);
             dialogTime = c.getString(timeIndex);
@@ -156,11 +175,14 @@ public class NoteEditorActivity extends AppCompatActivity {
             getIsTrigger =  c.getInt(isTriggerIndex);
             placeLatitude = c.getFloat(latitudeIndex);
             placeLongitude = c.getFloat(longitudeIndex);
-
+            try {
+                convertJsonObjectToArrayList();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }else{
             hideImageView();
-            //noteId = MainActivity.titles.size() - 1;
-            MainActivity.arrayAdapter.notifyDataSetChanged();
+            arrayAdapter.notifyDataSetChanged();
         }
 
         if(!imageLocation.equals("")){
@@ -189,6 +211,18 @@ public class NoteEditorActivity extends AppCompatActivity {
 
 
                 return true;
+            }
+        });
+
+
+
+        listItem.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                checkItemArrayList();
+                listItemArray.remove(position);
+                NoteEditorActivity.customAdapter.notifyDataSetChanged();
+                return false;
             }
         });
 
@@ -262,7 +296,6 @@ public class NoteEditorActivity extends AppCompatActivity {
             }
         });
 
-        //Log.i("slap",dialogDate.getClass().getName()+" " +dialogDate.getClass().getName() );
 
         if((!dialogDate.equals("") && !dialogTime.equals(""))){
 
@@ -386,7 +419,6 @@ public class NoteEditorActivity extends AppCompatActivity {
                 //get and assign spinner value
                 dialogRepeatBy = repeatSp.getSelectedItem().toString();
 
-
                 getIsTrigger = 0;
                 //get and assign radio button value
 
@@ -416,13 +448,11 @@ public class NoteEditorActivity extends AppCompatActivity {
 
     }else if(item.getItemId() == R.id.addPhotoId){
             takeImage();
-            Log.i("photoadded","photo added!!!");
         return true;
 
 
     }else if(item.getItemId() == R.id.addAudioId){
             voiceInput();
-            Log.i("audioadded","audio added!!!");
         return true;
     }else{
         return false;
@@ -494,10 +524,16 @@ public class NoteEditorActivity extends AppCompatActivity {
         if(dialogRepeatBy==null){
             dialogRepeatBy="";
         }
+        if(convertedArrayList==null){
+            convertedArrayList="";
+        }
+
     }
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event)  {
         //prevent null value if user did not click add reminder button
+        checkItemArrayList();
+        convertArrayListToJasonObject();
         preventNullValue();
         if (Integer.parseInt(android.os.Build.VERSION.SDK) > 5
                 && keyCode == KeyEvent.KEYCODE_BACK
@@ -507,26 +543,23 @@ public class NoteEditorActivity extends AppCompatActivity {
                 SQLiteDatabase noteDB = openOrCreateDatabase("Reminders", MODE_PRIVATE, null);
                 int numRows = (int) DatabaseUtils.queryNumEntries(noteDB, "reminders");
                 Log.i("noteId","-1");
-                noteDB.execSQL("INSERT INTO reminders (id, title, note,image, reminderType, date, time, repeatBy, location, latitude, longitude, isTrigger) VALUES ( " + Integer.toString(numRows+1) + ",'" + editTextTitle.getText().toString() + "' ,'" + editTextNotes.getText().toString() + "','"+ imageLocation +"' ,'"+ dialogReminderType +"', '"+ dialogDate +"', '"+  dialogTime +"','"+ dialogRepeatBy +"', '"+ dialogLocation +"','"+ placeLatitude +"' ,'"+ placeLongitude +"','0')");
+                noteDB.execSQL("INSERT INTO reminders (id, title, note,checklist , image, reminderType, date, time, repeatBy, location, latitude, longitude, isTrigger) VALUES ( " + Integer.toString(numRows+1) + ",'" + editTextTitle.getText().toString() + "' ,'" + editTextNotes.getText().toString() + "','"+ convertedArrayList +"' ,'"+ imageLocation +"' ,'"+ dialogReminderType +"', '"+ dialogDate +"', '"+  dialogTime +"','"+ dialogRepeatBy +"', '"+ dialogLocation +"','"+ placeLatitude +"' ,'"+ placeLongitude +"','0')");
 
                 MainActivity.titles.add(editTextTitle.getText().toString());
-                MainActivity.arrayAdapter.notifyDataSetChanged();
+                arrayAdapter.notifyDataSetChanged();
                 onBackPressed();
                 return true;
             }else{
 
-                noteDB.execSQL("UPDATE reminders SET title= '"+ editTextTitle.getText().toString() +"',note = '"+ editTextNotes.getText().toString() +"',image = '"+ imageLocation +"',reminderType = '" + dialogReminderType + "',date = '" + dialogDate + "',time = '"+ dialogTime +"', repeatBy = '" + dialogRepeatBy + "', location = '"+ dialogLocation +"',latitude = '"+ placeLatitude+"', longitude = '"+placeLongitude+"',isTrigger = '"+getIsTrigger +"'  WHERE id = "+ Integer.toString(noteId+1)+"");
+                noteDB.execSQL("UPDATE reminders SET title= '"+ editTextTitle.getText().toString() +"',note = '"+ editTextNotes.getText().toString() +"',checklist ='"+convertedArrayList+"' ,image = '"+ imageLocation +"',reminderType = '" + dialogReminderType + "',date = '" + dialogDate + "',time = '"+ dialogTime +"', repeatBy = '" + dialogRepeatBy + "', location = '"+ dialogLocation +"',latitude = '"+ placeLatitude+"', longitude = '"+placeLongitude+"',isTrigger = '"+getIsTrigger +"'  WHERE id = "+ Integer.toString(noteId+1)+"");
                 if(SearchReminderActivity.arrayAdapter != null) {
 
                     SearchReminderActivity.titlesFilter.set(noteId, editTextTitle.getText().toString());
                     SearchReminderActivity.arrayAdapter.notifyDataSetChanged();
                 }
 
-
-
-
                 MainActivity.titles.set(noteId,editTextTitle.getText().toString());
-                MainActivity.arrayAdapter.notifyDataSetChanged();
+                arrayAdapter.notifyDataSetChanged();
 
 
             }
@@ -545,12 +578,18 @@ public class NoteEditorActivity extends AppCompatActivity {
 
                 switch (item.getItemId()){
                     case R.id.action_normalText:
+                        hideItemList();
+                        enableAudioButton();
 
-
+                        if(!imageLocation.equals("")){
+                            showImageView();
+                        }
                         break;
                     case R.id.action_tickBoxes:
-
-
+                        hideTextOnly();
+                        runCheckBox();
+                        diableHeaderButton();
+                        hideImageView();
                         break;
 
                 }
@@ -562,7 +601,6 @@ public class NoteEditorActivity extends AppCompatActivity {
 
     public void takeImage() {
 
-       // if(isTakePhoto){
         if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)  != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
             requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
@@ -573,10 +611,7 @@ public class NoteEditorActivity extends AppCompatActivity {
             startActivityForResult(intent, 1);
         }
 
-       // }else{
-       //     imageView.setVisibility(View.GONE);
-       //     editTextNotes.getLayoutParams().height = 2200;
-       // }
+
 
     }
 
@@ -616,15 +651,9 @@ public class NoteEditorActivity extends AppCompatActivity {
                 cursor.close();
 
 
-                //ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                //bitmap.compress(Bitmap.CompressFormat.PNG,     0, bos);
-                //byte[] byteArray = bos.toByteArray();
-                //encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
         }
     }
 
@@ -643,48 +672,156 @@ public class NoteEditorActivity extends AppCompatActivity {
         imageView.setVisibility(View.VISIBLE);
         imageView.getLayoutParams().height = 700;
         editTextNotes.getLayoutParams().height = 1500;
+
+    }
+    public void runCheckBox(){
+        customAdapter = new CustomAdapter();
+        listItem.setAdapter(customAdapter);
     }
 
     public void hideImageView(){
-
         imageView.setVisibility(View.GONE);
         editTextNotes.getLayoutParams().height = 2200;
+        listItem.getLayoutParams().height = 1100;
+    }
 
+    public void hideItemList(){
+        editTextNotes.setVisibility(View.VISIBLE);
+        addListItemButton.setVisibility(View.GONE);
+        listItem.setVisibility(View.GONE);
+        editTextNotes.getLayoutParams().height = 2200;
+    }
+
+    //when user click from text only to checkbox
+    public void hideTextOnly(){
+        editTextNotes.setVisibility(View.GONE);
+        addListItemButton.setVisibility(View.VISIBLE);
+        listItem.setVisibility(View.VISIBLE);
+        listItem.getLayoutParams().height = 1100;
     }
 
     public void voiceInput(){
         Intent i = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         i.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         startActivityForResult(i, 3);
+    }
+
+    //create custom listview
+    class CustomAdapter extends BaseAdapter implements Filterable {
+
+        @Override
+        public int getCount() {
+            return listItemArray.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+
+            convertView = getLayoutInflater().inflate(R.layout.custom_checklist,null);
+            //TextView textViewPlaceName = (TextView) convertView.findViewById(R.id.textViewPlaceId);
+            EditText listItemListView = (EditText) convertView.findViewById(R.id.editTextCheckBoxId);
+
+            // textViewPlaceName.setText(locationsASC.get(position));
+            listItemListView.setText(listItemArray.get(position));
+            return convertView;
+        }
+
+        @Override
+        public Filter getFilter() {
+            return null;
+        }
+    }
+
+    public void addNewList(View view){
+        checkItemArrayList();
+        listItemArray.add("");
+        NoteEditorActivity.customAdapter.notifyDataSetChanged();
+    }
+
+    public void checkItemArrayList(){
+        View v;
+        EditText et;
+        listItemArray.clear();
+
+        for(int x = 0 ; x < listItem.getCount() ; x++){
+            v = listItem.getChildAt(x);
+
+            et = (EditText)v.findViewById(R.id.editTextCheckBoxId);
+            listItemArray.add(et.getText().toString());
+        }
+    }
+
+    public void convertArrayListToJasonObject(){
+        Log.i("listItemArray",listItemArray.toString());
+
+        JSONObject json = new JSONObject();
+        try {
+            Log.i("listItemArray",listItemArray.toString());
+            json.put("uniqueArrays", new JSONArray(listItemArray));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        convertedArrayList = json.toString();
+    }
+
+    public void convertJsonObjectToArrayList() throws JSONException {
+
+        if(!convertedArrayList.equals("")){
+            //hideTextOnly();
+            showImageView();
+            runCheckBox();
+            JSONObject json = null;
+
+            try {
+                json = new JSONObject(convertedArrayList);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            JSONArray   items =  json.optJSONArray("uniqueArrays");
+
+            for (int i = 0; i < items.length(); i++) {
+                listItemArray.add(items.getString(i));
+            }
+
+
+            // arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1,  items);
+
+            listItem.setAdapter(arrayAdapter);
+            arrayAdapter.notifyDataSetChanged();
+
+
+        }else{
+            hideItemList();
+        }
 
 
     }
 
+    public void diableHeaderButton(){
 
-    public void detectNextLine(){
-        editTextNotes.addTextChangedListener( new TextWatcher(){
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence txt, int start, int before, int count ) {
-                if( -1 != txt.toString().indexOf("\n") ){
-                    
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        } );
+        View takePhotoButton =  findViewById(R.id.addPhotoId);
+        View addAudioButton =  findViewById(R.id.addAudioId);
+        takePhotoButton.setEnabled(false);
+        addAudioButton.setEnabled(false);
+        Toast.makeText(getApplicationContext(),"Pick photo and audio recording are disabled!",Toast.LENGTH_SHORT).show();
 
     }
-
-
-
-
+    public void enableAudioButton(){
+        View takePhotoButton =  findViewById(R.id.addPhotoId);
+        View addAudioButton =  findViewById(R.id.addAudioId);
+        takePhotoButton.setEnabled(true);
+        addAudioButton.setEnabled(true);
+        Toast.makeText(getApplicationContext(),"Pick photo and audio recording are enabled!",Toast.LENGTH_SHORT).show();
+    }
 }

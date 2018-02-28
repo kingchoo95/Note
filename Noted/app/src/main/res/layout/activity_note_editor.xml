@@ -44,6 +44,23 @@
             android:visibility="gone"
             app:srcCompat="@drawable/common_google_signin_btn_icon_disabled" />
 
+        <ListView
+            android:id="@+id/listItemListViewId"
+            android:layout_width="wrap_content"
+            android:layout_height="353dp"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/addListItemButtonId"
+            android:layout_width="140dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:background="@android:color/holo_orange_light"
+            android:onClick="addNewList"
+            android:text="+ List item"
+            android:textColor="@color/colorWhite"
+            android:visibility="gone" />
+
         <EditText
             android:id="@+id/editTextAddNoteHereId"
             android:layout_width="match_parent"
@@ -83,6 +100,7 @@
             tools:layout_editor_absoluteY="335dp">
 
         </android.support.design.widget.BottomNavigationView>
+
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

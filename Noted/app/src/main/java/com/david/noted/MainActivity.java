@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
         try{
 
             SQLiteDatabase noteDB = this.openOrCreateDatabase("Reminders", MODE_PRIVATE, null);
-            noteDB.execSQL("CREATE TABLE IF NOT EXISTS reminders (id INTEGER, title VARCHAR, note VARCHAR, image VARCHAR, reminderType VARCHAR, date VARCHAR, time VARCHAR, repeatBy VARCHAR, location VARCHAR, latitude REAL, longitude REAL, isTrigger INTEGER)");
+            noteDB.execSQL("CREATE TABLE IF NOT EXISTS reminders (id INTEGER, title VARCHAR, note VARCHAR , checkList VARCHAR , image VARCHAR, reminderType VARCHAR, date VARCHAR, time VARCHAR, repeatBy VARCHAR, location VARCHAR, latitude REAL, longitude REAL, isTrigger INTEGER)");
 
 
             Cursor c = noteDB.rawQuery("SELECT * FROM reminders",null);
@@ -98,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
             int idIndex = c.getColumnIndex("id");
             int titleIndex = c.getColumnIndex("title");
             int noteIndex = c.getColumnIndex("note");
+            int checkListIndex = c.getColumnIndex("checkList");
             int reminderTypeIndex = c.getColumnIndex("reminderType");
             int dateIndex = c.getColumnIndex("date");
             int timeIndex = c.getColumnIndex("time");
@@ -110,7 +111,8 @@ public class MainActivity extends AppCompatActivity {
             c.moveToFirst();
 
             while(c != null){
-                Log.i("Resultnow",Integer.toString(c.getInt(idIndex)) + c.getString(titleIndex) + c.getString(noteIndex) +  c.getString(reminderTypeIndex) + c.getString(dateIndex) +  c.getString(timeIndex) +  c.getString(repeatByIndex) +c.getString(locationIndex) +c.getString(latitudeIndex)+c.getString(longitudeIndex)+Integer.toString(c.getInt(isTriggerIndex)));
+                //Log.i("Resultnow",Integer.toString(c.getInt(idIndex)) + c.getString(titleIndex) + c.getString(noteIndex) +  c.getString(reminderTypeIndex) + c.getString(dateIndex) +  c.getString(timeIndex) +  c.getString(repeatByIndex) +c.getString(locationIndex) +c.getString(latitudeIndex)+c.getString(longitudeIndex)+Integer.toString(c.getInt(isTriggerIndex)));
+                Log.i("ResultNow" , c.getString(checkListIndex));
                 titles.add(c.getString(titleIndex));
                 locations.add(c.getString(locationIndex));
                 dates.add(c.getString(dateIndex));

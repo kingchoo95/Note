@@ -49,7 +49,6 @@ public class SearchPlaceActivity extends AppCompatActivity {
                         ASC = false;
                         runDatabase();
 
-
                         break;
                     case R.id.action_acending:
                         ASC = true;
