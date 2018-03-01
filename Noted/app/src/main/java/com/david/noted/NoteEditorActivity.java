@@ -92,7 +92,7 @@ public class NoteEditorActivity extends AppCompatActivity {
     static CustomAdapter customAdapter;
     ArrayList<String> listItemArray = new ArrayList<>();
     ListView listItem;
-
+    EditText et;
     //make string array for spinner
     String repeats[]={"Does not repeat","Daily","Weekly","Monthly","Yearly"};
     //date and time picker for dialog
@@ -532,7 +532,9 @@ public class NoteEditorActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event)  {
         //prevent null value if user did not click add reminder button
-        checkItemArrayList();
+        if(et!=null){
+            checkItemArrayList();
+        }
         convertArrayListToJasonObject();
         preventNullValue();
         if (Integer.parseInt(android.os.Build.VERSION.SDK) > 5
@@ -750,7 +752,7 @@ public class NoteEditorActivity extends AppCompatActivity {
 
     public void checkItemArrayList(){
         View v;
-        EditText et;
+
         listItemArray.clear();
 
         for(int x = 0 ; x < listItem.getCount() ; x++){
@@ -762,7 +764,7 @@ public class NoteEditorActivity extends AppCompatActivity {
     }
 
     public void convertArrayListToJasonObject(){
-        Log.i("listItemArray",listItemArray.toString());
+
 
         JSONObject json = new JSONObject();
         try {
