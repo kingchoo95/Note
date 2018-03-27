@@ -18,15 +18,15 @@
     <application
         android:name=".StarterApplication"
         android:allowBackup="false"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:icon="@mipmap/note"
+        android:label="note"
+        android:roundIcon="@mipmap/note"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         >
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name"
+            android:label="note"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

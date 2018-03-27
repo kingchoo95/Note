@@ -60,10 +60,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,7 +70,7 @@ import static com.david.noted.MainActivity.arrayAdapter;
 public class NoteEditorActivity extends AppCompatActivity {
 
     //variable for dialog reminder
-    Dialog dialog;
+    Dialog dialog,dialogTag;
     String dialogReminderType = "";
     String dialogDate = "";
     String dialogTime = "";
@@ -108,7 +106,7 @@ public class NoteEditorActivity extends AppCompatActivity {
     EditText editTextTitle,editTextNotes;
     //Declear for date dialog
     ImageView imageView;
-
+    TextView dialogTagCancel,dialogTagSave;
 
 
     @Override
@@ -136,6 +134,8 @@ public class NoteEditorActivity extends AppCompatActivity {
         intent = getIntent();
         dialog = new Dialog(NoteEditorActivity.this);
         dialog.setContentView(R.layout.add_reminder_dialog);
+
+
         noteId = intent.getIntExtra("noteId",noteId);
         Log.i("noteId",Integer.toString(noteId));
         if(noteId != -1 ){
@@ -454,7 +454,12 @@ public class NoteEditorActivity extends AppCompatActivity {
     }else if(item.getItemId() == R.id.addAudioId){
             voiceInput();
         return true;
-    }else{
+    }else if(item.getItemId() == R.id.addTagId){
+
+
+            addTag();
+            return true;
+        }else{
         return false;
     }
 
@@ -545,7 +550,7 @@ public class NoteEditorActivity extends AppCompatActivity {
                 SQLiteDatabase noteDB = openOrCreateDatabase("Reminders", MODE_PRIVATE, null);
                 int numRows = (int) DatabaseUtils.queryNumEntries(noteDB, "reminders");
                 Log.i("noteId","-1");
-                noteDB.execSQL("INSERT INTO reminders (id, title, note,checklist , image, reminderType, date, time, repeatBy, location, latitude, longitude, isTrigger) VALUES ( " + Integer.toString(numRows+1) + ",'" + editTextTitle.getText().toString() + "' ,'" + editTextNotes.getText().toString() + "','"+ convertedArrayList +"' ,'"+ imageLocation +"' ,'"+ dialogReminderType +"', '"+ dialogDate +"', '"+  dialogTime +"','"+ dialogRepeatBy +"', '"+ dialogLocation +"','"+ placeLatitude +"' ,'"+ placeLongitude +"','0')");
+                noteDB.execSQL("INSERT INTO reminders (id, title, note,checklist , image, reminderType, tag, date, time, repeatBy, location, latitude, longitude, isTrigger) VALUES ( " + Integer.toString(numRows+1) + ",'" + editTextTitle.getText().toString() + "' ,'" + editTextNotes.getText().toString() + "','"+ convertedArrayList +"' ,'"+ imageLocation +"' ,'"+ dialogReminderType +"',' TAGTAGTAG  ' ,'"+ dialogDate +"', '"+  dialogTime +"','"+ dialogRepeatBy +"', '"+ dialogLocation +"','"+ placeLatitude +"' ,'"+ placeLongitude +"','0')");
 
                 MainActivity.titles.add(editTextTitle.getText().toString());
                 arrayAdapter.notifyDataSetChanged();
@@ -553,7 +558,7 @@ public class NoteEditorActivity extends AppCompatActivity {
                 return true;
             }else{
 
-                noteDB.execSQL("UPDATE reminders SET title= '"+ editTextTitle.getText().toString() +"',note = '"+ editTextNotes.getText().toString() +"',checklist ='"+convertedArrayList+"' ,image = '"+ imageLocation +"',reminderType = '" + dialogReminderType + "',date = '" + dialogDate + "',time = '"+ dialogTime +"', repeatBy = '" + dialogRepeatBy + "', location = '"+ dialogLocation +"',latitude = '"+ placeLatitude+"', longitude = '"+placeLongitude+"',isTrigger = '"+getIsTrigger +"'  WHERE id = "+ Integer.toString(noteId+1)+"");
+                noteDB.execSQL("UPDATE reminders SET title= '"+ editTextTitle.getText().toString() +"',note = '"+ editTextNotes.getText().toString() +"',checklist ='"+convertedArrayList+"' ,image = '"+ imageLocation +"',reminderType = '" + dialogReminderType + "', tag = 'TAGTAGTAG' ,date = '" + dialogDate + "',time = '"+ dialogTime +"', repeatBy = '" + dialogRepeatBy + "', location = '"+ dialogLocation +"',latitude = '"+ placeLatitude+"', longitude = '"+placeLongitude+"',isTrigger = '"+getIsTrigger +"'  WHERE id = "+ Integer.toString(noteId+1)+"");
                 if(SearchReminderActivity.arrayAdapter != null) {
 
                     SearchReminderActivity.titlesFilter.set(noteId, editTextTitle.getText().toString());
@@ -730,10 +735,7 @@ public class NoteEditorActivity extends AppCompatActivity {
         public View getView(int position, View convertView, ViewGroup parent) {
 
             convertView = getLayoutInflater().inflate(R.layout.custom_checklist,null);
-            //TextView textViewPlaceName = (TextView) convertView.findViewById(R.id.textViewPlaceId);
             EditText listItemListView = (EditText) convertView.findViewById(R.id.editTextCheckBoxId);
-
-            // textViewPlaceName.setText(locationsASC.get(position));
             listItemListView.setText(listItemArray.get(position));
             return convertView;
         }
@@ -779,7 +781,7 @@ public class NoteEditorActivity extends AppCompatActivity {
     public void convertJsonObjectToArrayList() throws JSONException {
 
         if(!convertedArrayList.equals("")){
-            //hideTextOnly();
+
             showImageView();
             runCheckBox();
             JSONObject json = null;
@@ -796,8 +798,6 @@ public class NoteEditorActivity extends AppCompatActivity {
                 listItemArray.add(items.getString(i));
             }
 
-
-            // arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1,  items);
 
             listItem.setAdapter(arrayAdapter);
             arrayAdapter.notifyDataSetChanged();
@@ -826,4 +826,33 @@ public class NoteEditorActivity extends AppCompatActivity {
         addAudioButton.setEnabled(true);
         Toast.makeText(getApplicationContext(),"Pick photo and audio recording are enabled!",Toast.LENGTH_SHORT).show();
     }
+
+
+    public void addTag(){
+        dialogTag = new Dialog(NoteEditorActivity.this);
+        dialogTag.setContentView(R.layout.add_tag_dialog);
+
+        dialogTag.show();
+        dialogTagSave = (TextView) dialogTag.findViewById(R.id.textViewTagSaveId);
+        dialogTagCancel = (TextView) dialogTag.findViewById(R.id.textViewTagCancelId);
+
+
+        dialogTagCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogTag.dismiss();
+            }
+        });
+
+        dialogTagSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogTag.dismiss();
+            }
+        });
+
+    }
+
+
+
 }
