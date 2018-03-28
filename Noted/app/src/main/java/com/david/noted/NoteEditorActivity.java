@@ -63,7 +63,9 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static com.david.noted.MainActivity.arrayAdapter;
 
@@ -81,6 +83,7 @@ public class NoteEditorActivity extends AppCompatActivity {
     String getReminderTime = "";
     String imageLocation = "";
     String convertedArrayList= "";
+    String tagTitle = "None";
     Float getPlaceLatitude = (float)200;
     Float getPlaceLongitude = (float)200;
     Float placeLatitude;
@@ -106,11 +109,21 @@ public class NoteEditorActivity extends AppCompatActivity {
     EditText editTextTitle,editTextNotes;
     //Declear for date dialog
     ImageView imageView;
-    TextView dialogTagCancel,dialogTagSave;
+
+    //Declear for tag dialog
+    TextView dialogTagCancel,dialogTagSave,currentTagTextView;
+    EditText dialogTagEditText;
+    Button buttonTagAddNewTag;
+    static ArrayList<String> tagsArraylist = new ArrayList<>();
+    Set<String> filteredArraylist = new HashSet<>();
+    ArrayAdapter arrayAdapterTag;
+    ListView listViewTag;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_editor);
@@ -135,9 +148,14 @@ public class NoteEditorActivity extends AppCompatActivity {
         dialog = new Dialog(NoteEditorActivity.this);
         dialog.setContentView(R.layout.add_reminder_dialog);
 
-
+        dialogTag = new Dialog(NoteEditorActivity.this);
+        dialogTag.setContentView(R.layout.add_tag_dialog);
+        searchAndAddAllTags();
+        listViewTag = (ListView) dialogTag.findViewById(R.id.tagListViewId);
+        arrayAdapterTag = new ArrayAdapter(this,android.R.layout.simple_list_item_1,filteredArraylist.toArray());
+        listViewTag.setAdapter(arrayAdapterTag);
         noteId = intent.getIntExtra("noteId",noteId);
-        Log.i("noteId",Integer.toString(noteId));
+
         if(noteId != -1 ){
 
             Cursor c = noteDB.rawQuery("SELECT * FROM reminders WHERE id = " + Integer.toString(noteId+1)+ "", null);
@@ -147,6 +165,7 @@ public class NoteEditorActivity extends AppCompatActivity {
             int noteIndex = c.getColumnIndex("note");
             int checkListIndex = c.getColumnIndex("checkList");
             int imageIndex = c.getColumnIndex("image");
+            int tagIndex = c.getColumnIndex("tag");
             int reminderTypeIndex = c.getColumnIndex("reminderType");
             int dateIndex = c.getColumnIndex("date");
             int timeIndex = c.getColumnIndex("time");
@@ -175,6 +194,7 @@ public class NoteEditorActivity extends AppCompatActivity {
             getIsTrigger =  c.getInt(isTriggerIndex);
             placeLatitude = c.getFloat(latitudeIndex);
             placeLongitude = c.getFloat(longitudeIndex);
+            tagTitle = c.getString(tagIndex);
             try {
                 convertJsonObjectToArrayList();
             } catch (JSONException e) {
@@ -550,7 +570,7 @@ public class NoteEditorActivity extends AppCompatActivity {
                 SQLiteDatabase noteDB = openOrCreateDatabase("Reminders", MODE_PRIVATE, null);
                 int numRows = (int) DatabaseUtils.queryNumEntries(noteDB, "reminders");
                 Log.i("noteId","-1");
-                noteDB.execSQL("INSERT INTO reminders (id, title, note,checklist , image, reminderType, tag, date, time, repeatBy, location, latitude, longitude, isTrigger) VALUES ( " + Integer.toString(numRows+1) + ",'" + editTextTitle.getText().toString() + "' ,'" + editTextNotes.getText().toString() + "','"+ convertedArrayList +"' ,'"+ imageLocation +"' ,'"+ dialogReminderType +"',' TAGTAGTAG  ' ,'"+ dialogDate +"', '"+  dialogTime +"','"+ dialogRepeatBy +"', '"+ dialogLocation +"','"+ placeLatitude +"' ,'"+ placeLongitude +"','0')");
+                noteDB.execSQL("INSERT INTO reminders (id, title, note,checklist , image, reminderType, tag, date, time, repeatBy, location, latitude, longitude, isTrigger) VALUES ( " + Integer.toString(numRows+1) + ",'" + editTextTitle.getText().toString() + "' ,'" + editTextNotes.getText().toString() + "','"+ convertedArrayList +"' ,'"+ imageLocation +"' ,'"+ dialogReminderType +"','"+ tagTitle +"' ,'"+ dialogDate +"', '"+  dialogTime +"','"+ dialogRepeatBy +"', '"+ dialogLocation +"','"+ placeLatitude +"' ,'"+ placeLongitude +"','0')");
 
                 MainActivity.titles.add(editTextTitle.getText().toString());
                 arrayAdapter.notifyDataSetChanged();
@@ -558,7 +578,7 @@ public class NoteEditorActivity extends AppCompatActivity {
                 return true;
             }else{
 
-                noteDB.execSQL("UPDATE reminders SET title= '"+ editTextTitle.getText().toString() +"',note = '"+ editTextNotes.getText().toString() +"',checklist ='"+convertedArrayList+"' ,image = '"+ imageLocation +"',reminderType = '" + dialogReminderType + "', tag = 'TAGTAGTAG' ,date = '" + dialogDate + "',time = '"+ dialogTime +"', repeatBy = '" + dialogRepeatBy + "', location = '"+ dialogLocation +"',latitude = '"+ placeLatitude+"', longitude = '"+placeLongitude+"',isTrigger = '"+getIsTrigger +"'  WHERE id = "+ Integer.toString(noteId+1)+"");
+                noteDB.execSQL("UPDATE reminders SET title= '"+ editTextTitle.getText().toString() +"',note = '"+ editTextNotes.getText().toString() +"',checklist ='"+convertedArrayList+"' ,image = '"+ imageLocation +"',reminderType = '" + dialogReminderType + "', tag = '"+ tagTitle +"' ,date = '" + dialogDate + "',time = '"+ dialogTime +"', repeatBy = '" + dialogRepeatBy + "', location = '"+ dialogLocation +"',latitude = '"+ placeLatitude+"', longitude = '"+placeLongitude+"',isTrigger = '"+getIsTrigger +"'  WHERE id = "+ Integer.toString(noteId+1)+"");
                 if(SearchReminderActivity.arrayAdapter != null) {
 
                     SearchReminderActivity.titlesFilter.set(noteId, editTextTitle.getText().toString());
@@ -829,14 +849,13 @@ public class NoteEditorActivity extends AppCompatActivity {
 
 
     public void addTag(){
-        dialogTag = new Dialog(NoteEditorActivity.this);
-        dialogTag.setContentView(R.layout.add_tag_dialog);
 
-        dialogTag.show();
         dialogTagSave = (TextView) dialogTag.findViewById(R.id.textViewTagSaveId);
         dialogTagCancel = (TextView) dialogTag.findViewById(R.id.textViewTagCancelId);
-
-
+        dialogTagEditText = (EditText) dialogTag.findViewById(R.id.editTextTagId);
+        currentTagTextView = (TextView) dialogTag.findViewById(R.id.currentTagTextViewId);
+        buttonTagAddNewTag = (Button) dialogTag.findViewById(R.id.buttonAddNewTagId);verifyTag();
+        dialogTag.show();
         dialogTagCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -847,11 +866,79 @@ public class NoteEditorActivity extends AppCompatActivity {
         dialogTagSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
                 dialogTag.dismiss();
+
             }
         });
 
+        buttonTagAddNewTag.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveNewTag();
+            }
+        });
+
+        listViewTag.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //tell which row the user tap
+
+                tagTitle = listViewTag.getItemAtPosition(position).toString();
+                currentTagTextView.setText(tagTitle);
+            }
+        });
     }
+
+    public void saveNewTag(){
+
+        String tempTag = dialogTagEditText.getText().toString();
+
+        if(!tempTag.equals("")){
+            tagTitle = tempTag.substring(0, 1).toUpperCase() + tempTag.substring(1).toLowerCase();
+        }else{
+            tagTitle= tempTag;
+        }
+
+        verifyTag();
+
+
+    }
+
+    public void verifyTag(){
+        if(tagTitle.equals("")){
+            currentTagTextView.setText("None");
+            tagTitle="None";
+        }else{
+            currentTagTextView.setText(tagTitle);
+        }
+    }
+
+    public void searchAndAddAllTags(){
+        tagsArraylist.clear();
+        try{
+
+            SQLiteDatabase noteDB = this.openOrCreateDatabase("Reminders", MODE_PRIVATE, null);
+
+            Cursor c = noteDB.rawQuery("SELECT * FROM reminders",null);
+            int tagIndex = c.getColumnIndex("tag");
+            c.moveToFirst();
+
+            while(c != null){
+                tagsArraylist.add(c.getString(tagIndex));
+                c.moveToNext();
+            }
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        //prevent duplicated tag
+        filteredArraylist.clear();
+        filteredArraylist.addAll(tagsArraylist);
+    }
+
 
 
 

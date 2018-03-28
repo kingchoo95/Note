@@ -20,16 +20,31 @@
         app:layout_constraintRight_toRightOf="parent">
 
         <Button
+            android:id="@+id/buttonSearchTagId"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:layout_weight="0.72"
+            android:background="@android:color/holo_blue_light"
+            android:drawableTop="@drawable/ic_bookmark_border_black_24dp"
+            android:onClick="enterSearchTagActivity"
+            android:padding="10dp"
+            android:text="Tag"
+            android:textColor="@color/common_google_signin_btn_text_dark_default"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="8dp" />
+
+        <Button
             android:id="@+id/buttonSearchTimeId"
             android:layout_width="40dp"
             android:layout_height="match_parent"
             android:layout_margin="10dp"
             android:layout_weight="0.72"
-            android:background="@android:color/holo_orange_light"
+            android:background="@android:color/holo_green_light"
             android:drawableTop="@drawable/ic_access_time_black_24dp"
             android:onClick="enterSearchTimeActivity"
             android:padding="10dp"
-            android:text="Time Reminder"
+            android:text="Time"
             android:textColor="@color/common_google_signin_btn_text_dark_default"
             tools:layout_editor_absoluteX="0dp"
             tools:layout_editor_absoluteY="8dp" />
@@ -40,11 +55,11 @@
             android:layout_height="match_parent"
             android:layout_margin="10dp"
             android:layout_weight="0.72"
-            android:background="@android:color/holo_orange_light"
+            android:background="@android:color/holo_red_light"
             android:drawableTop="@drawable/ic_place_black_24dp"
             android:onClick="enterSearchLocationActivity"
             android:padding="10dp"
-            android:text=" Place Reminder"
+            android:text=" Place "
             android:textColor="@color/common_google_signin_btn_text_dark_default" />
 
 

@@ -81,6 +81,13 @@ public class SearchReminderActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    //go to search tag activity
+    public void enterSearchTagActivity(View view){
+        Intent intent = new Intent(this,SearchTagActivity.class);
+
+        startActivity(intent);
+    }
+
 
     // check which position if have same titles note
     public int checkAfterFilterPosition(String clickFilterString, int position){

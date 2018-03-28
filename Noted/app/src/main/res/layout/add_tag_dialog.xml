@@ -30,7 +30,7 @@
             android:id="@+id/currentTagTextViewId"
             android:layout_width="126dp"
             android:layout_height="match_parent"
-            android:text="Home"
+            android:text="None"
             android:textSize="18sp" />
 
     </LinearLayout>
@@ -41,7 +41,7 @@
         android:orientation="horizontal">
 
         <EditText
-            android:id="@+id/editText3"
+            android:id="@+id/editTextTagId"
             android:layout_width="173dp"
             android:layout_height="57dp"
             android:ems="10"
@@ -54,7 +54,7 @@
             app:layout_constraintVertical_bias="0.497" />
 
         <Button
-            android:id="@+id/button3"
+            android:id="@+id/buttonAddNewTagId"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"

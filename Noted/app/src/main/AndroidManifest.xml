@@ -22,8 +22,7 @@
         android:label="note"
         android:roundIcon="@mipmap/note"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        >
+        android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
             android:label="note"
@@ -50,10 +49,15 @@
         <activity android:name=".SearchTimeActivity" />
         <activity android:name=".SearchLocationActivity" />
         <activity android:name=".WebViewGoogleMapActivity" />
-        <activity android:name=".LogInActivity" android:noHistory="true" />
+        <activity
+            android:name=".LogInActivity"
+            android:noHistory="true" />
         <activity android:name=".FriendsListActivity" />
         <activity android:name=".AddFriendsActivity" />
-        <activity android:name=".ChatActivity" android:noHistory="true"/>
+        <activity
+            android:name=".ChatActivity"
+            android:noHistory="true" />
+        <activity android:name=".SearchTagActivity"></activity>
     </application>
 
 </manifest>
