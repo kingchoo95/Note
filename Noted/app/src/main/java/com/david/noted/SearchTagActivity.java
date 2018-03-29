@@ -72,4 +72,12 @@ public class SearchTagActivity extends AppCompatActivity {
         filteredArraylist.clear();
         filteredArraylist.addAll(tagsArraylist);
     }
+
+    @Override
+    protected void onResume() {
+        searchAndAddAllTags();
+        listView.setAdapter(arrayAdapter);
+        super.onResume();
+
+    }
 }

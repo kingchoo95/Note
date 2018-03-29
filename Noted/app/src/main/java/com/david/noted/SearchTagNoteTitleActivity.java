@@ -39,8 +39,10 @@ public class SearchTagNoteTitleActivity extends AppCompatActivity {
 
                noteTitle = listViewTitle.getItemAtPosition(position).toString();
                 searchNoteIdUsingTagAndTitle();
+                finish();
             }
         });
+
 
 
     }

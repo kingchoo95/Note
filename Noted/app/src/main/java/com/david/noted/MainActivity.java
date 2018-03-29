@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
             int idIndex = c.getColumnIndex("id");
             int titleIndex = c.getColumnIndex("title");
             int noteIndex = c.getColumnIndex("note");
-            int checkListIndex = c.getColumnIndex("checkList");
+            int imageIndex = c.getColumnIndex("image");
             int tagIndex = c.getColumnIndex("tag");
             int reminderTypeIndex = c.getColumnIndex("reminderType");
             int dateIndex = c.getColumnIndex("date");
@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
             c.moveToFirst();
 
             while(c != null){
-                Log.i("Resultnow",Integer.toString(c.getInt(idIndex)) + c.getString(titleIndex) + c.getString(noteIndex) + c.getString(tagIndex) +  c.getString(reminderTypeIndex) + c.getString(dateIndex) +  c.getString(timeIndex) +  c.getString(repeatByIndex) +c.getString(locationIndex) +c.getString(latitudeIndex)+c.getString(longitudeIndex)+Integer.toString(c.getInt(isTriggerIndex)));
+                Log.i("Resultnow",Integer.toString(c.getInt(idIndex)) + c.getString(titleIndex) + c.getString(noteIndex) + c.getString(imageIndex) + c.getString(tagIndex) +  c.getString(reminderTypeIndex) + c.getString(dateIndex) +  c.getString(timeIndex) +  c.getString(repeatByIndex) +c.getString(locationIndex) +c.getString(latitudeIndex)+c.getString(longitudeIndex)+Integer.toString(c.getInt(isTriggerIndex)));
 
                 titles.add(c.getString(titleIndex));
                 locations.add(c.getString(locationIndex));

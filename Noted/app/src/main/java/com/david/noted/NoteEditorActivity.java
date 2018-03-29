@@ -812,7 +812,7 @@ public class NoteEditorActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            JSONArray   items =  json.optJSONArray("uniqueArrays");
+            JSONArray items =  json.optJSONArray("uniqueArrays");
 
             for (int i = 0; i < items.length(); i++) {
                 listItemArray.add(items.getString(i));
@@ -826,8 +826,6 @@ public class NoteEditorActivity extends AppCompatActivity {
         }else{
             hideItemList();
         }
-
-
     }
 
     public void diableHeaderButton(){
@@ -859,14 +857,15 @@ public class NoteEditorActivity extends AppCompatActivity {
         dialogTagCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 dialogTag.dismiss();
+
             }
         });
 
         dialogTagSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
 
                 dialogTag.dismiss();
 
