@@ -72,7 +72,7 @@ import static com.david.noted.MainActivity.arrayAdapter;
 public class NoteEditorActivity extends AppCompatActivity {
 
     //variable for dialog reminder
-    Dialog dialog,dialogTag;
+    Dialog dialog,dialogTag,dialogImage;
     String dialogReminderType = "";
     String dialogDate = "";
     String dialogTime = "";
@@ -83,6 +83,7 @@ public class NoteEditorActivity extends AppCompatActivity {
     String getReminderTime = "";
     String imageLocation = "";
     String convertedArrayList= "";
+    String convertedArrayListImage= "";
     String tagTitle = "None";
     Float getPlaceLatitude = (float)200;
     Float getPlaceLongitude = (float)200;
@@ -107,10 +108,10 @@ public class NoteEditorActivity extends AppCompatActivity {
     ArrayAdapter repeatAdapter;
 
     EditText editTextTitle,editTextNotes;
-    //Declear for date dialog
-    ImageView imageView;
+    //Declare for date dialog
 
-    //Declear for tag dialog
+
+    //Declare for tag dialog
     TextView dialogTagCancel,dialogTagSave,currentTagTextView;
     EditText dialogTagEditText;
     Button buttonTagAddNewTag;
@@ -119,7 +120,11 @@ public class NoteEditorActivity extends AppCompatActivity {
     ArrayAdapter arrayAdapterTag;
     ListView listViewTag;
 
-
+    //Declare for imageView
+    ListView listViewImage;
+    ArrayList<String> ImageViewArrayList = new ArrayList<>();
+    ImageView imageViewId;
+    static CustomAdapterImageView customAdapterImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,9 +133,10 @@ public class NoteEditorActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_editor);
         //services to check condition
+        addArrayListIntoImageListView();
 
         listItem = (ListView) findViewById(R.id.listItemListViewId);
-        imageView = (ImageView) findViewById(R.id.imageViewId);
+
         editTextTitle = (EditText) findViewById(R.id.editTextTitleId);
         editTextNotes = (EditText) findViewById(R.id.editTextAddNoteHereId);
         addListItemButton = (Button) findViewById(R.id.addListItemButtonId);
@@ -150,6 +156,9 @@ public class NoteEditorActivity extends AppCompatActivity {
 
         dialogTag = new Dialog(NoteEditorActivity.this);
         dialogTag.setContentView(R.layout.add_tag_dialog);
+
+        dialogImage = new Dialog(NoteEditorActivity.this);
+        dialogImage.setContentView(R.layout.image_dialog);
         searchAndAddAllTags();
         listViewTag = (ListView) dialogTag.findViewById(R.id.tagListViewId);
         arrayAdapterTag = new ArrayAdapter(this,android.R.layout.simple_list_item_1,filteredArraylist.toArray());
@@ -182,9 +191,13 @@ public class NoteEditorActivity extends AppCompatActivity {
             editTextTitle.setText(c.getString(titleIndex));
             editTextNotes.setText(c.getString(noteIndex));
             imageLocation = c.getString(imageIndex);
-            if(imageLocation != null) {
-                imageView.setImageURI(Uri.fromFile(new File(imageLocation)));
+
+            try {
+                convertJsonObjectToArrayListImage();
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
+
             convertedArrayList = c.getString(checkListIndex);
             dialogReminderType = c.getString(reminderTypeIndex);
             dialogDate = c.getString(dateIndex);
@@ -205,37 +218,6 @@ public class NoteEditorActivity extends AppCompatActivity {
             arrayAdapter.notifyDataSetChanged();
         }
 
-        if(!imageLocation.equals("")){
-            showImageView();
-        }else{
-            hideImageView();
-        }
-
-        imageView.setOnLongClickListener(new View.OnLongClickListener() {
-
-            @Override
-            public boolean onLongClick(View v) {
-                new AlertDialog.Builder(NoteEditorActivity.this)
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setTitle("Are you sure?")
-                        .setMessage("Do you want to remove photo?")
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                                imageLocation = "";
-                                hideImageView();
-                            }
-
-                        }).setNegativeButton("No",null).show();
-
-
-                return true;
-            }
-        });
-
-
-
         listItem.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
@@ -246,6 +228,45 @@ public class NoteEditorActivity extends AppCompatActivity {
             }
         });
 
+        listViewImage.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+
+                    new AlertDialog.Builder(NoteEditorActivity.this)
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .setTitle("Are you sure?")
+                            .setMessage("Do you want to remove photo?")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    ImageViewArrayList.remove(position);
+                                    NoteEditorActivity.customAdapterImageView.notifyDataSetChanged();
+                                    if(!ImageViewArrayList.isEmpty()){
+                                        showImageView();
+                                    }else{
+                                        hideImageView();
+                                    }
+                                }
+
+                            }).setNegativeButton("No",null).show();
+
+
+
+                return false;
+            }
+        });
+        listViewImage.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //tell which row the user tap
+
+                String imageTitle = ImageViewArrayList.get(position).toString();
+                ImageView showImage = (ImageView) dialogImage.findViewById(R.id.imageViewDialogId);
+                showImage.setImageURI(Uri.fromFile(new File(imageTitle)));
+                dialogImage.show();
+
+            }
+        });
     }
     // menu bar for add reminder start
     @Override
@@ -552,6 +573,9 @@ public class NoteEditorActivity extends AppCompatActivity {
         if(convertedArrayList==null){
             convertedArrayList="";
         }
+        if(convertedArrayListImage==null){
+            convertedArrayListImage="";
+        }
 
     }
     @Override
@@ -561,6 +585,7 @@ public class NoteEditorActivity extends AppCompatActivity {
             checkItemArrayList();
         }
         convertArrayListToJasonObject();
+        convertArrayListImageToJasonObject();
         preventNullValue();
         if (Integer.parseInt(android.os.Build.VERSION.SDK) > 5
                 && keyCode == KeyEvent.KEYCODE_BACK
@@ -570,7 +595,7 @@ public class NoteEditorActivity extends AppCompatActivity {
                 SQLiteDatabase noteDB = openOrCreateDatabase("Reminders", MODE_PRIVATE, null);
                 int numRows = (int) DatabaseUtils.queryNumEntries(noteDB, "reminders");
                 Log.i("noteId","-1");
-                noteDB.execSQL("INSERT INTO reminders (id, title, note,checklist , image, reminderType, tag, date, time, repeatBy, location, latitude, longitude, isTrigger) VALUES ( " + Integer.toString(numRows+1) + ",'" + editTextTitle.getText().toString() + "' ,'" + editTextNotes.getText().toString() + "','"+ convertedArrayList +"' ,'"+ imageLocation +"' ,'"+ dialogReminderType +"','"+ tagTitle +"' ,'"+ dialogDate +"', '"+  dialogTime +"','"+ dialogRepeatBy +"', '"+ dialogLocation +"','"+ placeLatitude +"' ,'"+ placeLongitude +"','0')");
+                noteDB.execSQL("INSERT INTO reminders (id, title, note,checklist , image, reminderType, tag, date, time, repeatBy, location, latitude, longitude, isTrigger) VALUES ( " + Integer.toString(numRows+1) + ",'" + editTextTitle.getText().toString() + "' ,'" + editTextNotes.getText().toString() + "','"+ convertedArrayList +"' ,'"+ convertedArrayListImage +"' ,'"+ dialogReminderType +"','"+ tagTitle +"' ,'"+ dialogDate +"', '"+  dialogTime +"','"+ dialogRepeatBy +"', '"+ dialogLocation +"','"+ placeLatitude +"' ,'"+ placeLongitude +"','0')");
 
                 MainActivity.titles.add(editTextTitle.getText().toString());
                 arrayAdapter.notifyDataSetChanged();
@@ -578,7 +603,7 @@ public class NoteEditorActivity extends AppCompatActivity {
                 return true;
             }else{
 
-                noteDB.execSQL("UPDATE reminders SET title= '"+ editTextTitle.getText().toString() +"',note = '"+ editTextNotes.getText().toString() +"',checklist ='"+convertedArrayList+"' ,image = '"+ imageLocation +"',reminderType = '" + dialogReminderType + "', tag = '"+ tagTitle +"' ,date = '" + dialogDate + "',time = '"+ dialogTime +"', repeatBy = '" + dialogRepeatBy + "', location = '"+ dialogLocation +"',latitude = '"+ placeLatitude+"', longitude = '"+placeLongitude+"',isTrigger = '"+getIsTrigger +"'  WHERE id = "+ Integer.toString(noteId+1)+"");
+                noteDB.execSQL("UPDATE reminders SET title= '"+ editTextTitle.getText().toString() +"',note = '"+ editTextNotes.getText().toString() +"',checklist ='"+convertedArrayList+"' ,image = '"+ convertedArrayListImage +"',reminderType = '" + dialogReminderType + "', tag = '"+ tagTitle +"' ,date = '" + dialogDate + "',time = '"+ dialogTime +"', repeatBy = '" + dialogRepeatBy + "', location = '"+ dialogLocation +"',latitude = '"+ placeLatitude+"', longitude = '"+placeLongitude+"',isTrigger = '"+getIsTrigger +"'  WHERE id = "+ Integer.toString(noteId+1)+"");
                 if(SearchReminderActivity.arrayAdapter != null) {
 
                     SearchReminderActivity.titlesFilter.set(noteId, editTextTitle.getText().toString());
@@ -608,8 +633,12 @@ public class NoteEditorActivity extends AppCompatActivity {
                         hideItemList();
                         enableAudioButton();
 
-                        if(!imageLocation.equals("")){
-                            showImageView();
+                        if(!ImageViewArrayList.isEmpty()){
+                        showImageView();
+
+                        }else{
+                        hideImageView();
+
                         }
                         break;
                     case R.id.action_tickBoxes:
@@ -660,7 +689,7 @@ public class NoteEditorActivity extends AppCompatActivity {
 
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
-                imageView.setImageBitmap(bitmap);
+                //imageView.setImageBitmap(bitmap);
 
 
                 String[] filePathColumn = {MediaStore.Images.Media.DATA};
@@ -668,6 +697,7 @@ public class NoteEditorActivity extends AppCompatActivity {
                 if(cursor.moveToFirst()){
                     int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
                     imageLocation = cursor.getString(columnIndex);
+                    ImageViewArrayList.add(imageLocation);
                     if(!imageLocation.equals("")){
                         showImageView();
                     }else{
@@ -696,8 +726,8 @@ public class NoteEditorActivity extends AppCompatActivity {
     }
 
     public void showImageView(){
-        imageView.setVisibility(View.VISIBLE);
-        imageView.getLayoutParams().height = 700;
+        listViewImage.setVisibility(View.VISIBLE);
+        listViewImage.getLayoutParams().height = 700;
         editTextNotes.getLayoutParams().height = 1500;
 
     }
@@ -707,7 +737,7 @@ public class NoteEditorActivity extends AppCompatActivity {
     }
 
     public void hideImageView(){
-        imageView.setVisibility(View.GONE);
+        listViewImage.setVisibility(View.GONE);
         editTextNotes.getLayoutParams().height = 2200;
         listItem.getLayoutParams().height = 1100;
     }
@@ -802,7 +832,7 @@ public class NoteEditorActivity extends AppCompatActivity {
 
         if(!convertedArrayList.equals("")){
 
-            showImageView();
+
             runCheckBox();
             JSONObject json = null;
 
@@ -915,6 +945,7 @@ public class NoteEditorActivity extends AppCompatActivity {
     }
 
     public void searchAndAddAllTags(){
+
         tagsArraylist.clear();
         try{
 
@@ -939,6 +970,97 @@ public class NoteEditorActivity extends AppCompatActivity {
     }
 
 
+    //create custom listview
+    class CustomAdapterImageView extends BaseAdapter implements Filterable{
 
+        @Override
+        public int getCount() {
+            return ImageViewArrayList.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+
+            convertView = getLayoutInflater().inflate(R.layout.custom_image_listview,null);
+            imageViewId = (ImageView) convertView.findViewById(R.id.imageViewId);
+
+            imageViewId.setImageURI(Uri.fromFile(new File(ImageViewArrayList.get(position))));
+
+
+            return convertView;
+        }
+
+        @Override
+        public Filter getFilter() {
+
+            return null;
+        }
+
+
+    }
+
+    //add array list into listView
+    public void addArrayListIntoImageListView(){
+        customAdapterImageView = new CustomAdapterImageView();
+        listViewImage = (ListView) findViewById(R.id.listViewImageId);
+
+        if(ImageViewArrayList != null){
+            listViewImage.setAdapter(customAdapterImageView);
+        }
+    }
+
+    public void convertArrayListImageToJasonObject(){
+
+
+        JSONObject json = new JSONObject();
+        try {
+
+            json.put("uniqueImageArrays", new JSONArray(ImageViewArrayList));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        convertedArrayListImage = json.toString();
+    }
+
+    public void convertJsonObjectToArrayListImage() throws JSONException {
+
+            JSONObject json = null;
+
+            try {
+                json = new JSONObject(imageLocation);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            JSONArray items =  json.optJSONArray("uniqueImageArrays");
+
+            for (int i = 0; i < items.length(); i++) {
+                ImageViewArrayList.add(items.getString(i));
+            }
+
+            listViewImage.setAdapter(customAdapterImageView);
+
+            customAdapterImageView.notifyDataSetChanged();
+
+            Log.i("ImageViewArrayList",ImageViewArrayList.toString());
+        if(!ImageViewArrayList.isEmpty()){
+            showImageView();
+            Log.i("gotimage","yes!");
+        }else{
+            hideImageView();
+            Log.i("gotimage","no!");
+        }
+
+    }
 
 }
