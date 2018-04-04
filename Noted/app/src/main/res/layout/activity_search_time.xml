@@ -27,10 +27,12 @@
 
         <ListView
             android:id="@+id/timeListViewId"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="444dp"
             tools:layout_editor_absoluteX="8dp"
-            tools:layout_editor_absoluteY="8dp" />
+            tools:layout_editor_absoluteY="8dp"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="10.0sp"/>
 
         <android.support.design.widget.BottomNavigationView
             android:id="@+id/bottom_navigation_time"

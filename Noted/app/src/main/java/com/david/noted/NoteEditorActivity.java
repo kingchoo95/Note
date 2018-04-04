@@ -43,6 +43,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioButton;
@@ -267,6 +268,7 @@ public class NoteEditorActivity extends AppCompatActivity {
 
             }
         });
+        dismissImageDialog();
     }
     // menu bar for add reminder start
     @Override
@@ -1060,6 +1062,19 @@ public class NoteEditorActivity extends AppCompatActivity {
             hideImageView();
             Log.i("gotimage","no!");
         }
+
+    }
+    public void dismissImageDialog(){
+        ImageButton imageButtonDismiss = (ImageButton) dialogImage.findViewById(R.id.imageButtonDismissId);
+
+        imageButtonDismiss.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                dialogImage.dismiss();
+
+            }
+        });
 
     }
 
