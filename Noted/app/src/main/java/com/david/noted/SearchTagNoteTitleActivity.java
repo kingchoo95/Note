@@ -71,7 +71,7 @@ public class SearchTagNoteTitleActivity extends AppCompatActivity {
     }
 
     public void searchNoteIdUsingTagAndTitle(){
-        Log.i("sadasd","asdasdasd");
+
         try{
 
             SQLiteDatabase noteDB = this.openOrCreateDatabase("Reminders", MODE_PRIVATE, null);

@@ -19,7 +19,7 @@
         android:name=".StarterApplication"
         android:allowBackup="false"
         android:icon="@mipmap/note"
-        android:label="note"
+        android:label="Note"
         android:roundIcon="@mipmap/note"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">

@@ -68,7 +68,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static com.david.noted.MainActivity.arrayAdapter;
+
 
 public class NoteEditorActivity extends AppCompatActivity {
 
@@ -216,7 +216,7 @@ public class NoteEditorActivity extends AppCompatActivity {
             }
         }else{
             hideImageView();
-            arrayAdapter.notifyDataSetChanged();
+
         }
 
         listItem.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -599,8 +599,6 @@ public class NoteEditorActivity extends AppCompatActivity {
                 Log.i("noteId","-1");
                 noteDB.execSQL("INSERT INTO reminders (id, title, note,checklist , image, reminderType, tag, date, time, repeatBy, location, latitude, longitude, isTrigger) VALUES ( " + Integer.toString(numRows+1) + ",'" + editTextTitle.getText().toString() + "' ,'" + editTextNotes.getText().toString() + "','"+ convertedArrayList +"' ,'"+ convertedArrayListImage +"' ,'"+ dialogReminderType +"','"+ tagTitle +"' ,'"+ dialogDate +"', '"+  dialogTime +"','"+ dialogRepeatBy +"', '"+ dialogLocation +"','"+ placeLatitude +"' ,'"+ placeLongitude +"','0')");
 
-                MainActivity.titles.add(editTextTitle.getText().toString());
-                arrayAdapter.notifyDataSetChanged();
                 onBackPressed();
                 return true;
             }else{
@@ -611,9 +609,6 @@ public class NoteEditorActivity extends AppCompatActivity {
                     SearchReminderActivity.titlesFilter.set(noteId, editTextTitle.getText().toString());
                     SearchReminderActivity.arrayAdapter.notifyDataSetChanged();
                 }
-
-                MainActivity.titles.set(noteId,editTextTitle.getText().toString());
-                arrayAdapter.notifyDataSetChanged();
 
 
             }
@@ -691,7 +686,6 @@ public class NoteEditorActivity extends AppCompatActivity {
 
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
-                //imageView.setImageBitmap(bitmap);
 
 
                 String[] filePathColumn = {MediaStore.Images.Media.DATA};
@@ -851,8 +845,8 @@ public class NoteEditorActivity extends AppCompatActivity {
             }
 
 
-            listItem.setAdapter(arrayAdapter);
-            arrayAdapter.notifyDataSetChanged();
+            //listItem.setAdapter(arrayAdapter);
+            //arrayAdapter.notifyDataSetChanged();
 
 
         }else{
@@ -1054,13 +1048,10 @@ public class NoteEditorActivity extends AppCompatActivity {
 
             customAdapterImageView.notifyDataSetChanged();
 
-            Log.i("ImageViewArrayList",ImageViewArrayList.toString());
         if(!ImageViewArrayList.isEmpty()){
             showImageView();
-            Log.i("gotimage","yes!");
         }else{
             hideImageView();
-            Log.i("gotimage","no!");
         }
 
     }

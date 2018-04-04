@@ -5,24 +5,27 @@
     android:background="@drawable/listviewborder">
 
     <TextView
-        android:id="@+id/listViewTagGroupId"
+        android:id="@+id/textViewTitleId"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginStart="29dp"
         android:paddingTop="5dp"
-        android:text="UTAR, Sungai Long"
-        android:textSize="20sp" />
+        android:text="Make Payment"
+        android:textSize="24sp"
+        android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/textViewTitleNameId"
+        android:id="@+id/textViewNoteId"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/listViewTagGroupId"
-        android:layout_below="@+id/listViewTagGroupId"
-        android:layout_marginTop="12dp"
+        android:layout_alignStart="@+id/textViewTitleId"
+        android:layout_below="@+id/textViewTitleId"
+        android:layout_marginTop="13dp"
         android:paddingBottom="3dp"
-        android:text="Make  payment"
-        android:textSize="15sp" />
+        android:text="Rm100..."
+        android:textSize="14sp" />
+
+
 </RelativeLayout>

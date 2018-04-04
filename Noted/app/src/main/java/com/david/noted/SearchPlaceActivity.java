@@ -118,7 +118,7 @@ public class SearchPlaceActivity extends AppCompatActivity {
                 //String clickedLocationString = listView.getItemAtPosition(position).toString();
                 convertView = getLayoutInflater().inflate(R.layout.search_place_custom_layout,null);
                 TextView clickedTitle = (TextView) customAdapter.getView(position,view,parent).findViewById(R.id.textViewTitleNameId);
-                TextView clickedLocation = (TextView) customAdapter.getView(position,view,parent).findViewById(R.id.textViewPlaceId);
+                TextView clickedLocation = (TextView) customAdapter.getView(position,view,parent).findViewById(R.id.listViewTagGroupId);
                 //Log.i("adasdasdasd",clickedTitle.getText().toString());
                 Log.i("awdwa1",Integer.toString(position));
                 position = getLocationPosition(clickedTitle.getText().toString(), clickedLocation.getText().toString() );
@@ -169,7 +169,7 @@ public class SearchPlaceActivity extends AppCompatActivity {
         public View getView(int position, View convertView, ViewGroup parent) {
 
             convertView = getLayoutInflater().inflate(R.layout.search_place_custom_layout,null);
-            TextView textViewPlaceName = (TextView) convertView.findViewById(R.id.textViewPlaceId);
+            TextView textViewPlaceName = (TextView) convertView.findViewById(R.id.listViewTagGroupId);
             TextView textViewTitleName = (TextView) convertView.findViewById(R.id.textViewTitleNameId);
 
             textViewPlaceName.setText(locationsASC.get(position));
