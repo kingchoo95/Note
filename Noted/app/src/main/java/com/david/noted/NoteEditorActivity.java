@@ -592,26 +592,30 @@ public class NoteEditorActivity extends AppCompatActivity {
         if (Integer.parseInt(android.os.Build.VERSION.SDK) > 5
                 && keyCode == KeyEvent.KEYCODE_BACK
                 && event.getRepeatCount() == 0) {
+            if(!editTextTitle.getText().toString().matches("")){
+                if(noteId ==-1){
+                    SQLiteDatabase noteDB = openOrCreateDatabase("Reminders", MODE_PRIVATE, null);
+                    int numRows = (int) DatabaseUtils.queryNumEntries(noteDB, "reminders");
+                    Log.i("noteId","-1");
+                    noteDB.execSQL("INSERT INTO reminders (id, title, note,checklist , image, reminderType, tag, date, time, repeatBy, location, latitude, longitude, isTrigger) VALUES ( " + Integer.toString(numRows+1) + ",'" + editTextTitle.getText().toString() + "' ,'" + editTextNotes.getText().toString() + "','"+ convertedArrayList +"' ,'"+ convertedArrayListImage +"' ,'"+ dialogReminderType +"','"+ tagTitle +"' ,'"+ dialogDate +"', '"+  dialogTime +"','"+ dialogRepeatBy +"', '"+ dialogLocation +"','"+ placeLatitude +"' ,'"+ placeLongitude +"','0')");
 
-            if(noteId ==-1){
-                SQLiteDatabase noteDB = openOrCreateDatabase("Reminders", MODE_PRIVATE, null);
-                int numRows = (int) DatabaseUtils.queryNumEntries(noteDB, "reminders");
-                Log.i("noteId","-1");
-                noteDB.execSQL("INSERT INTO reminders (id, title, note,checklist , image, reminderType, tag, date, time, repeatBy, location, latitude, longitude, isTrigger) VALUES ( " + Integer.toString(numRows+1) + ",'" + editTextTitle.getText().toString() + "' ,'" + editTextNotes.getText().toString() + "','"+ convertedArrayList +"' ,'"+ convertedArrayListImage +"' ,'"+ dialogReminderType +"','"+ tagTitle +"' ,'"+ dialogDate +"', '"+  dialogTime +"','"+ dialogRepeatBy +"', '"+ dialogLocation +"','"+ placeLatitude +"' ,'"+ placeLongitude +"','0')");
+                    onBackPressed();
+                    return true;
+                }else{
 
-                onBackPressed();
-                return true;
-            }else{
+                    noteDB.execSQL("UPDATE reminders SET title= '"+ editTextTitle.getText().toString() +"',note = '"+ editTextNotes.getText().toString() +"',checklist ='"+convertedArrayList+"' ,image = '"+ convertedArrayListImage +"',reminderType = '" + dialogReminderType + "', tag = '"+ tagTitle +"' ,date = '" + dialogDate + "',time = '"+ dialogTime +"', repeatBy = '" + dialogRepeatBy + "', location = '"+ dialogLocation +"',latitude = '"+ placeLatitude+"', longitude = '"+placeLongitude+"',isTrigger = '"+getIsTrigger +"'  WHERE id = "+ Integer.toString(noteId+1)+"");
+                    if(SearchReminderActivity.arrayAdapter != null) {
 
-                noteDB.execSQL("UPDATE reminders SET title= '"+ editTextTitle.getText().toString() +"',note = '"+ editTextNotes.getText().toString() +"',checklist ='"+convertedArrayList+"' ,image = '"+ convertedArrayListImage +"',reminderType = '" + dialogReminderType + "', tag = '"+ tagTitle +"' ,date = '" + dialogDate + "',time = '"+ dialogTime +"', repeatBy = '" + dialogRepeatBy + "', location = '"+ dialogLocation +"',latitude = '"+ placeLatitude+"', longitude = '"+placeLongitude+"',isTrigger = '"+getIsTrigger +"'  WHERE id = "+ Integer.toString(noteId+1)+"");
-                if(SearchReminderActivity.arrayAdapter != null) {
+                        SearchReminderActivity.titlesFilter.set(noteId, editTextTitle.getText().toString());
+                        SearchReminderActivity.arrayAdapter.notifyDataSetChanged();
+                    }
 
-                    SearchReminderActivity.titlesFilter.set(noteId, editTextTitle.getText().toString());
-                    SearchReminderActivity.arrayAdapter.notifyDataSetChanged();
+
                 }
-
-
+            }else{
+                Toast.makeText(getApplicationContext(),"Please type in title!",Toast.LENGTH_SHORT).show();
             }
+
 
         }
 

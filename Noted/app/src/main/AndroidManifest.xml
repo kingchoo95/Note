@@ -58,7 +58,8 @@
             android:name=".ChatActivity"
             android:noHistory="true" />
         <activity android:name=".SearchTagActivity" />
-        <activity android:name=".SearchTagNoteTitleActivity"></activity>
+        <activity android:name=".SearchTagNoteTitleActivity" />
+        <activity android:name=".AchievementActivity"></activity>
     </application>
 
 </manifest>

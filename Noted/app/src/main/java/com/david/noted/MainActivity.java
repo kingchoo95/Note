@@ -13,6 +13,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
@@ -48,6 +49,10 @@ public class MainActivity extends AppCompatActivity {
 
     public int selectId = 0;
 
+    //task status
+    int totalCompleted;
+    int totalAbandon;
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -82,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         listView = (ListView) findViewById(R.id.notesListViewId);
         refreshAdapter();
+
 
 
 
@@ -121,9 +127,9 @@ public class MainActivity extends AppCompatActivity {
                 final int itemToDelete = position;
                 new AlertDialog.Builder(MainActivity.this)
                         .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setTitle("Are you sure?")
-                        .setMessage("Do you want to delete this note ?")
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        .setTitle("Task Ststus")
+                        .setMessage("What is the progress of this task?")
+                        .setPositiveButton("Abandon", new DialogInterface.OnClickListener() {
 
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -142,9 +148,34 @@ public class MainActivity extends AppCompatActivity {
                                     selectId = selectId+1;
 
                                 }
+                                int x = totalAbandon+1 ;
+                                noteDB.execSQL("UPDATE taskStatus SET abandon ="+ x +" WHERE id = 1");
                                 refreshAdapter();
                             }
-                        }).setNegativeButton("No",null).show();
+                        }).setNeutralButton("Completed",  new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        titles.remove(itemToDelete);
+
+
+                        SQLiteDatabase noteDB = openOrCreateDatabase("Reminders", MODE_PRIVATE, null);
+                        noteDB.execSQL("DELETE FROM reminders WHERE id = " + Integer.toString(itemToDelete+1)+ "");
+
+                        int numRows = (int)DatabaseUtils.queryNumEntries(noteDB, "reminders");
+
+                        selectId = itemToDelete+1 ;
+                        while(selectId <= numRows){
+
+                            noteDB.execSQL("UPDATE reminders SET id = "+ Integer.toString(selectId) +" WHERE id = "+ Integer.toString(selectId+1)+"");
+                            selectId = selectId+1;
+
+                        }
+                        int x = totalCompleted + 1;
+                        noteDB.execSQL("UPDATE taskStatus SET completed ="+ x +" WHERE id = 1");
+                        refreshAdapter();
+                    }
+                }).setNegativeButton("In progress",null).show();
                 return true;
             }
         });
@@ -177,6 +208,11 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.addFriendsId : {
                 Intent intent = new Intent(this, LogInActivity.class);
+                startActivity(intent);
+                return true;
+            }
+            case R.id.addTaskStatusId : {
+                Intent intent = new Intent(this, AchievementActivity.class);
                 startActivity(intent);
                 return true;
             }
@@ -274,6 +310,9 @@ public class MainActivity extends AppCompatActivity {
                 c.moveToNext();
             }
 
+
+
+
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -281,8 +320,56 @@ public class MainActivity extends AppCompatActivity {
         if(titles != null){
             listView.setAdapter(customAdapter);
         }
+        runTaskStatusDatabase();
+        Log.i("taskconpletee",Integer.toString(totalCompleted) + Integer.toString(totalAbandon));
 
     }
+
+    //database for recoding task status
+    public void runTaskStatusDatabase(){
+
+        try {
+
+            SQLiteDatabase noteDB = this.openOrCreateDatabase("Reminders", MODE_PRIVATE, null);
+            noteDB.execSQL("CREATE TABLE IF NOT EXISTS taskStatus (id INTEGER, completed INTEGER ,abandon INTEGER)");
+
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+            if(!prefs.getBoolean("firstTime", false)) {
+                noteDB.execSQL("INSERT INTO taskStatus (id,completed,abandon) VALUES (1,0,0)");
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putBoolean("firstTime", true);
+                editor.commit();
+            }
+
+
+            Cursor c = noteDB.rawQuery("SELECT * FROM taskStatus",null);
+
+
+            int completedIndex = c.getColumnIndex("completed");
+            int abandonIndex = c.getColumnIndex("abandon");
+            c.moveToFirst();
+
+
+            while(c != null){
+
+                totalCompleted = c.getInt(completedIndex);
+                totalAbandon = c.getInt(abandonIndex);
+
+                c.close();
+            }
+
+
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+
 
 
 

@@ -282,12 +282,12 @@ public class CheckConditionService extends Service{
         PendingIntent locationIntent = PendingIntent.getActivity(getApplicationContext(),selectedId,viewLocationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Notification notification = new Notification.Builder(getApplicationContext())
+                .setSmallIcon(R.mipmap.note)
                 .setContentTitle(selectedTitle)
                 .setContentIntent(showIntent)
                 .addAction(android.R.drawable.sym_action_chat,"Snooze", snoozeIntent)
                 .addAction(android.R.drawable.ic_menu_mylocation, "View Location", locationIntent)
                 .addAction(android.R.drawable.ic_menu_mylocation, "Find Helper", helperIntent)
-                .setSmallIcon(android.R.drawable.sym_def_app_icon)
                 .build();
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);

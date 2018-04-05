@@ -4,6 +4,7 @@
 
 
     <item android:id="@+id/addFriendsId" android:title="Find Helpers" ></item>
+    <item android:id="@+id/addTaskStatusId" android:title="Tasks Status" ></item>
 
     <item
         android:id="@+id/searchReminderId"
