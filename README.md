@@ -1,4 +1,4 @@
-# Noted
+# Note
 Noted project
 SMART REMINDER ON MOBILE PLATFORM 
 
